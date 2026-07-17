@@ -25,9 +25,13 @@
     21 => 'Illuminate\\Translation\\TranslationServiceProvider',
     22 => 'Illuminate\\Validation\\ValidationServiceProvider',
     23 => 'Illuminate\\View\\ViewServiceProvider',
-    24 => 'Carbon\\Laravel\\ServiceProvider',
-    25 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    26 => 'App\\Providers\\AppServiceProvider',
+    24 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    25 => 'Carbon\\Laravel\\ServiceProvider',
+    26 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    27 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    28 => 'Pest\\Laravel\\PestServiceProvider',
+    29 => 'App\\Providers\\AppServiceProvider',
+    30 => 'App\\Providers\\DomainServiceProvider',
   ),
   'eager' => 
   array (
@@ -42,8 +46,11 @@
     8 => 'Illuminate\\Session\\SessionServiceProvider',
     9 => 'Illuminate\\View\\ViewServiceProvider',
     10 => 'Carbon\\Laravel\\ServiceProvider',
-    11 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    12 => 'App\\Providers\\AppServiceProvider',
+    11 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    12 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    13 => 'Pest\\Laravel\\PestServiceProvider',
+    14 => 'App\\Providers\\AppServiceProvider',
+    15 => 'App\\Providers\\DomainServiceProvider',
   ),
   'deferred' => 
   array (
@@ -207,6 +214,7 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
+    'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
   ),
   'when' => 
   array (
@@ -250,6 +258,9 @@
     array (
     ),
     'Illuminate\\Validation\\ValidationServiceProvider' => 
+    array (
+    ),
+    'Laravel\\Tinker\\TinkerServiceProvider' => 
     array (
     ),
   ),
