@@ -1,0 +1,43 @@
+{
+  "name": "fuel-alliance/fuel-points",
+  "type": "project",
+  "description": "Топливный Альянс — программа лояльности ТМ АЗС (Laravel 13 + PHP 8.5 + PostgreSQL 17 + DDD)",
+  "license": "Apache-2.0",
+  "require": {
+    "php": "^8.5",
+    "laravel/framework": "^13.0"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.18",
+    "fakerphp/faker": "^1.23"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
