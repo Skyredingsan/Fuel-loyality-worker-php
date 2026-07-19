@@ -24,8 +24,6 @@ services:
       - "8080:80"
     volumes:
       - ./:/var/www/html:ro
-      # - ./docker/nginx/default.conf:/etc/nginx/default.conf:ro   # ← УБЕРИ ЭТУ СТРОКУ
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro   # ← ДОБАВЬ ЭТУ
     depends_on:
       - app
     networks:
