@@ -6,6 +6,7 @@ namespace FuelPoints\Level\Domain\Models;
 
 use Carbon\Carbon;
 use FuelPoints\Shared\Domain\ValueObjects\Privileges;
+use FuelPoints\Shared\Infrastructure\Eloquent\PrivilegesCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int             $id
  * @property string          $name
  * @property int             $min_points_per_year
- * @property Privileges      $privileges
+ * @property Privileges|null $privileges
  * @property Carbon          $created_at
  * @property Carbon          $updated_at
  */
@@ -29,7 +30,7 @@ class Level extends Model
 
     protected $casts = [
         'min_points_per_year' => 'integer',
-        'privileges'          => Privileges::class,
+        'privileges'          => PrivilegesCast::class,
     ];
 
     /**

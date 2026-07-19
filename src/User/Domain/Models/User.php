@@ -8,11 +8,14 @@ use Carbon\Carbon;
 use FuelPoints\Level\Domain\Models\UserLevelHistory;
 use FuelPoints\Result\Domain\Models\MonthlyResult;
 use FuelPoints\User\Domain\Enums\UserRole;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property int         $id
@@ -26,11 +29,12 @@ use Illuminate\Notifications\Notifiable;
  * @property Carbon      $updated_at
  * @property Carbon|null $deleted_at
  */
-class User extends Model
+class User extends Model implements AuthenticatableContract, JWTSubject
 {
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+    use Authenticatable;
 
     protected $table = 'users';
 
@@ -95,5 +99,25 @@ class User extends Model
     protected static function newFactory(): \Database\Factories\UserFactory
     {
         return \Database\Factories\UserFactory::new();
+    }
+
+    // ─── JWTSubject ──────────────────────────────────────
+
+    public function getJWTIdentifier(): int|string
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getJWTCustomClaims(): array
+    {
+        return [
+            'user_id' => $this->id,
+            'email'   => $this->email,
+            'role'    => $this->role->value,
+            'fio'     => $this->fio,
+        ];
     }
 }

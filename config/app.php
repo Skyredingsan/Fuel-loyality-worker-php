@@ -26,6 +26,9 @@ return [
     'providers' => ServiceProvider::defaultProviders()->merge([
         App\Providers\AppServiceProvider::class,
         App\Providers\DomainServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\ReverbServiceProvider::class,
+        \Laravel\Reverb\ReverbServiceProvider::class,
     ])->toArray(),
 
     'aliases' => Facade::defaultAliases()->toArray(),

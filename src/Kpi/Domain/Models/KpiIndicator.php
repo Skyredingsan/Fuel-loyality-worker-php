@@ -7,6 +7,7 @@ namespace FuelPoints\Kpi\Domain\Models;
 use Carbon\Carbon;
 use FuelPoints\Kpi\Domain\Enums\IndicatorType;
 use FuelPoints\Result\Domain\Models\IndicatorResult;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class KpiIndicator extends Model
 {
+    use HasFactory;
+
     protected $table = 'kpi_indicators';
 
     protected $fillable = [
@@ -77,5 +80,13 @@ class KpiIndicator extends Model
             IndicatorType::EXTRA   => $this->extra_weight,
             IndicatorType::PENALTY => $this->penalty_weight,
         };
+    }
+
+    /**
+     * Указываем factory для модели (пространства имён не совпадают по умолчанию).
+     */
+    protected static function newFactory(): \Database\Factories\KpiIndicatorFactory
+    {
+        return \Database\Factories\KpiIndicatorFactory::new();
     }
 }

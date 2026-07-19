@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FuelPoints\Shared\Domain\ValueObjects;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use JsonSerializable;
 use RuntimeException;
 
@@ -15,15 +14,15 @@ use RuntimeException;
  * В БД хранится в JSONB. Этот VO обеспечивает типизированный доступ
  * к полям бонусов (bonus, prize, ...).
  *
- * Дополнительно реализует Eloquent Cast, чтобы модель Level могла
- * автоматически конвертировать строку JSONB ↔ объект Privileges.
+ * Чистый Domain-класс — НЕ знает про Eloquent. Преобразование в/из БД
+ * делается отдельным классом PrivilegesCast в Infrastructure.
  */
-final class Privileges implements Arrayable, CastsAttributes, JsonSerializable
+final class Privileges implements Arrayable, JsonSerializable
 {
     /**
      * @param array<string, mixed> $items
      */
-    public function __construct(private array $items)
+    public function __construct(private array $items = [])
     {
     }
 
@@ -85,27 +84,5 @@ final class Privileges implements Arrayable, CastsAttributes, JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->items;
-    }
-
-    // ─── Eloquent CastsAttributes ─────────────────────────
-
-    public function get($model, string $key, $value, array $attributes): ?Privileges
-    {
-        return $value !== null ? self::fromJson($value) : null;
-    }
-
-    public function set($model, string $key, $value, array $attributes): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        if ($value instanceof self) {
-            return $value->toJson();
-        }
-        if (is_array($value)) {
-            return self::fromArray($value)->toJson();
-        }
-        // Если уже строка — отдаём как есть
-        return (string) $value;
     }
 }

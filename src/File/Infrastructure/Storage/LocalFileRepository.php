@@ -26,7 +26,7 @@ final class LocalFileRepository implements FileRepositoryInterface
     ): string {
         $this->ensureTypeSafe($type);
 
-        $ext = strtolower($file->getClientOriginalExtension());
+        $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'pdf');
         if (!in_array($ext, self::ALLOWED_EXTENSIONS, true)) {
             throw new \DomainException('File type not allowed: '.$ext);
         }

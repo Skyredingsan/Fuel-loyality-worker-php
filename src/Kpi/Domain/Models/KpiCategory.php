@@ -6,6 +6,7 @@ namespace FuelPoints\Kpi\Domain\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class KpiCategory extends Model
 {
+    use HasFactory;
+
     protected $table = 'kpi_categories';
 
     protected $fillable = [
@@ -35,5 +38,13 @@ class KpiCategory extends Model
     public function indicators(): HasMany
     {
         return $this->hasMany(KpiIndicator::class, 'category_id');
+    }
+
+    /**
+     * Указываем factory для модели.
+     */
+    protected static function newFactory(): \Database\Factories\KpiCategoryFactory
+    {
+        return \Database\Factories\KpiCategoryFactory::new();
     }
 }

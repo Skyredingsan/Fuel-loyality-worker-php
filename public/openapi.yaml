@@ -1,0 +1,580 @@
+openapi: 3.1.0
+info:
+  title: Fuel Points API
+  version: 2.0.0
+  description: |
+    REST API программы лояльности «Топливный Альянс».
+    Система геймификации для территориальных менеджеров АЗС:
+    - 3 роли: tm, expert, coordinator
+    - 4 категории KPI (ПМ, ОЭК, ЭКЛ, КБ) и 28 показателей
+    - 3 уровня привилегий
+    - JWT-авторизация
+    - Асинхронный CSV-экспорт через очередь
+    - Realtime-уведомления через Reverb WebSockets
+  contact:
+    name: Fuel Alliance Dev Team
+    email: dev@fuel.ru
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Аутентификация
+  - name: Пользователи
+  - name: KPI
+  - name: Результаты
+  - name: Уровни
+  - name: Файлы
+  - name: Отчёты
+  - name: Сервисные
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT-токен из POST /api/login
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, example: "VelichkinaSV@fuel.ru" }
+        password: { type: string, example: "DemoCoord#2026" }
+    User:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        email: { type: string, format: email, example: "user@fuel.ru" }
+        role: { type: string, enum: [tm, expert, coordinator] }
+        role_label: { type: string, example: "Координатор" }
+        fio: { type: string, example: "Иванов Иван Иванович" }
+        cluster_name: { type: string, nullable: true }
+        azs_count: { type: integer, example: 5 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    KpiIndicator:
+      type: object
+      properties:
+        id: { type: integer }
+        category_id: { type: integer }
+        category_code: { type: string, example: "ПМ" }
+        category_name: { type: string, example: "Продажи и маржа" }
+        code: { type: string, example: "ПМ1" }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        unit: { type: string, example: "%" }
+        indicator_type: { type: string, enum: [base, extra, penalty] }
+        base_value: { type: number, nullable: true }
+        base_weight: { type: integer, nullable: true }
+        extra_weight: { type: integer, nullable: true }
+        penalty_weight: { type: integer, nullable: true }
+    Level:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string, example: "Специалист Трассы" }
+        min_points_per_year: { type: integer }
+        privileges: { type: object, additionalProperties: true }
+    FullSummary:
+      type: object
+      properties:
+        user_id: { type: integer }
+        user_fio: { type: string }
+        period: { type: string }
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              category_code: { type: string }
+              category_name: { type: string }
+              base_points: { type: integer }
+              extra_points: { type: integer }
+              penalty_points: { type: integer }
+              total_points: { type: integer }
+        total_points: { type: integer }
+        yearly_points: { type: integer }
+        level: { $ref: '#/components/schemas/Level' }
+        detailed_results:
+          type: array
+          items: { type: object }
+    Error:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string }
+        code: { type: integer }
+
+paths:
+  /health:
+    get:
+      tags: [Сервисные]
+      security: []
+      summary: Health-check
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "OK" }
+                  message: { type: string }
+                  version: { type: string }
+
+  /login:
+    post:
+      tags: [Аутентификация]
+      security: []
+      summary: Логин по email и паролю
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Успешный логин
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  token_type: { type: string, example: "bearer" }
+                  expires_in: { type: integer, example: 3600 }
+                  user: { $ref: '#/components/schemas/User' }
+        '401': { description: Неверные учётные данные }
+        '422': { description: Ошибка валидации }
+
+  /users/me:
+    get:
+      tags: [Аутентификация]
+      summary: Текущий пользователь
+      responses:
+        '200':
+          description: OK
+          content: { application/json: { schema: { $ref: '#/components/schemas/User' } } }
+        '401': { description: Unauthorized }
+
+  /logout:
+    post:
+      tags: [Аутентификация]
+      summary: Логаут (инвалидация токена)
+      responses:
+        '200': { description: OK }
+
+  /users:
+    get:
+      tags: [Пользователи]
+      summary: Список пользователей (?role=tm|expert|coordinator)
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [tm, expert, coordinator] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/User' }
+
+  /users/tms:
+    get:
+      tags: [Пользователи]
+      summary: Список ТМ (для эксперта)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/User' }
+
+  /users/register:
+    post:
+      tags: [Пользователи]
+      summary: Создать пользователя (только coordinator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+                  properties:
+                    password: { type: string, minLength: 6 }
+      responses:
+        '201': { description: Создан }
+        '403': { description: Forbidden }
+        '409': { description: Email уже занят }
+
+  /users/{id}:
+    get:
+      tags: [Пользователи]
+      summary: Получить пользователя по ID
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+        '404': { description: Не найден }
+
+    put:
+      tags: [Пользователи]
+      summary: Обновить пользователя (только coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+        '403': { description: Forbidden }
+
+    delete:
+      tags: [Пользователи]
+      summary: Удалить пользователя (нельзя удалить себя)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Удалено }
+        '400': { description: Нельзя удалить себя }
+        '403': { description: Forbidden }
+
+  /kpi/categories:
+    get:
+      tags: [KPI]
+      summary: Список категорий KPI (ПМ, ОЭК, ЭКЛ, КБ)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: integer }
+                    code: { type: string, example: "ПМ" }
+                    name: { type: string }
+                    description: { type: string }
+
+  /kpi/indicators:
+    get:
+      tags: [KPI]
+      summary: Список всех показателей KPI
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/KpiIndicator' }
+
+    post:
+      tags: [KPI]
+      summary: Создать показатель (только coordinator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/KpiIndicator' }
+      responses:
+        '201': { description: Создан }
+        '403': { description: Forbidden }
+
+  /kpi/categories/{category}/indicators:
+    get:
+      tags: [KPI]
+      summary: Показатели по коду категории
+      parameters: [{ name: category, in: path, required: true, schema: { type: string, enum: [ПМ, ОЭК, ЭКЛ, КБ] } }]
+      responses:
+        '200': { description: OK }
+
+  /kpi/indicators/{id}:
+    put:
+      tags: [KPI]
+      summary: Обновить показатель (только coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+        '403': { description: Forbidden }
+
+    delete:
+      tags: [KPI]
+      summary: Удалить показатель (только coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Удалено }
+        '403': { description: Forbidden }
+
+  /results/enter:
+    post:
+      tags: [Результаты]
+      summary: Ввод результатов за месяц (expert, coordinator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, period, results]
+              properties:
+                user_id: { type: integer }
+                period: { type: string, pattern: '^\d{4}-\d{2}$', example: "2026-07" }
+                results:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [indicator_code]
+                    properties:
+                      indicator_code: { type: string, example: "ПМ1" }
+                      fact_value: { type: number, nullable: true, example: 95.5 }
+                      document_url: { type: string, nullable: true }
+      responses:
+        '201': { description: Создано }
+        '403': { description: Forbidden }
+        '422': { description: Ошибка валидации }
+
+  /results/{id}/confirm:
+    post:
+      tags: [Результаты]
+      summary: Подтвердить результат (coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+        '403': { description: Forbidden }
+        '404': { description: Не найден }
+
+  /results/{id}/reject:
+    post:
+      tags: [Результаты]
+      summary: Отклонить результат с причиной (coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 5 }
+      responses:
+        '200': { description: OK }
+        '403': { description: Forbidden }
+
+  /results:
+    get:
+      tags: [Результаты]
+      summary: Все результаты за период (для координатора)
+      parameters:
+        - { name: period, in: query, required: true, schema: { type: string, pattern: '^\d{4}-\d{2}$' } }
+      responses:
+        '200': { description: OK }
+
+  /results/my:
+    get:
+      tags: [Результаты]
+      summary: Мои результаты (для ТМ)
+      parameters:
+        - { name: period, in: query, schema: { type: string, pattern: '^\d{4}-\d{2}$' } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/FullSummary' } } } }
+
+  /results/{id}:
+    get:
+      tags: [Результаты]
+      summary: Получить результат по ID (для редактирования черновика)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+        '404': { description: Не найден }
+
+    put:
+      tags: [Результаты]
+      summary: Обновить черновик (expert, coordinator)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+        '400': { description: Только черновик можно обновлять }
+
+  /results/{id}/indicators:
+    get:
+      tags: [Результаты]
+      summary: Детальные результаты по показателям
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+
+  /results/user/{userId}:
+    get:
+      tags: [Результаты]
+      summary: Результаты конкретного ТМ за период
+      parameters:
+        - { name: userId, in: path, required: true, schema: { type: integer } }
+        - { name: period, in: query, required: true, schema: { type: string, pattern: '^\d{4}-\d{2}$' } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/FullSummary' } } } }
+
+  /results/user/{userId}/yearly:
+    get:
+      tags: [Результаты]
+      summary: Годовой отчёт пользователя
+      parameters:
+        - { name: userId, in: path, required: true, schema: { type: integer } }
+        - { name: year, in: query, schema: { type: integer } }
+      responses:
+        '200': { description: OK }
+
+  /levels:
+    get:
+      tags: [Уровни]
+      summary: Список всех уровней
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Level' }
+
+  /levels/user/{userId}:
+    get:
+      tags: [Уровни]
+      summary: Текущий уровень пользователя
+      parameters: [{ name: userId, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Level' } } } }
+
+  /levels/user/{userId}/history:
+    get:
+      tags: [Уровни]
+      summary: История изменения уровня
+      parameters: [{ name: userId, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: OK }
+
+  /upload:
+    post:
+      tags: [Файлы]
+      summary: Загрузить файл (multipart/form-data, max 10MB)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, type]
+              properties:
+                file: { type: string, format: binary }
+                type: { type: string, enum: [indicator_result, general, user_avatar] }
+                entity_id: { type: string, nullable: true }
+      responses:
+        '201': { description: Загружено }
+
+  /upload/{type}/{filename}:
+    get:
+      tags: [Файлы]
+      summary: Скачать файл
+      parameters:
+        - { name: type, in: path, required: true, schema: { type: string } }
+        - { name: filename, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Файл }
+        '404': { description: Не найден }
+
+    delete:
+      tags: [Файлы]
+      summary: Удалить файл (expert, coordinator)
+      parameters:
+        - { name: type, in: path, required: true, schema: { type: string } }
+        - { name: filename, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Удалено }
+
+  /reports/export:
+    post:
+      tags: [Отчёты]
+      summary: Запуск асинхронного CSV-экспорта (coordinator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [period]
+              properties:
+                period: { type: string, pattern: '^\d{4}-\d{2}$' }
+      responses:
+        '202':
+          description: Принято, генерация запущена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  export_id: { type: string, format: uuid }
+                  status: { type: string, example: "pending" }
+                  period: { type: string }
+                  check_url: { type: string }
+
+  /reports/exports/{id}:
+    get:
+      tags: [Отчёты]
+      summary: Статус экспорта
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+                  status: { type: string, enum: [pending, processing, ready, failed] }
+                  period: { type: string }
+                  rows_count: { type: integer }
+                  error: { type: string, nullable: true }
+                  download_url: { type: string, nullable: true }
+        '404': { description: Не найден }
+
+  /reports/exports/{id}/download:
+    get:
+      tags: [Отчёты]
+      summary: Скачать готовый CSV
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        '200':
+          description: CSV-файл
+          content:
+            text/csv:
+              schema: { type: string, format: binary }
+        '403': { description: Forbidden }
+        '409': { description: Ещё не готов }
