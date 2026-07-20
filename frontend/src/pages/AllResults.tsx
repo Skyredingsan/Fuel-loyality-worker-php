@@ -40,6 +40,16 @@ export const AllResults: React.FC = () => {
             alert(err.response?.data?.message || 'Ошибка');
         }
     };
+    
+    const handleDelete = async (id: number) => {
+        if (!confirm('Удалить результат? Это действие необратимо.')) return;
+        try {
+              await resultsService.deleteResult(id);
+              load();
+        } catch (err: any) {
+              alert(err.response?.data?.message || 'Ошибка');
+        }
+  };
 
     return (
         <div className="space-y-6">
@@ -113,6 +123,12 @@ export const AllResults: React.FC = () => {
                                                 className="px-3 py-1 text-xs bg-red-500 text-white hover:bg-red-600 rounded"
                                             >
                                                 Отклонить
+                                            </button>
+                                            <button
+                                              onClick={() => handleDelete(r.id)}
+                                              className="px-3 py-1 text-xs bg-gray-500 text-white hover:bg-gray-600 rounded"
+                                            >
+                                              Удалить
                                             </button>
                                         </>
                                     )}
