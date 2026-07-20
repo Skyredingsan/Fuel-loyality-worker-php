@@ -79,6 +79,10 @@ Route::middleware('jwt.auth')->group(function (): void {
         ->whereNumber('id')
         ->middleware('role:coordinator');
 
+    Route::delete('/results/{id}',           [ResultController::class, 'destroy'])
+        ->whereNumber('id')
+        ->middleware('role:coordinator');
+
     Route::get('/results',                 [ResultController::class, 'index']);
     Route::get('/results/my',              [ResultController::class, 'my']);
     Route::get('/results/{id}',            [ResultController::class, 'show'])
