@@ -71,12 +71,6 @@ export const Login: React.FC = () => {
                         {loading ? 'Вход...' : 'Войти'}
                     </button>
                 </form>
-
-                <div className="mt-6 p-4 bg-gray-50 rounded text-xs text-gray-600">
-                    <p className="font-medium mb-1">Тестовые аккаунты:</p>
-                    <p>VelichkinaSV@fuel.ru / DemoCoord#2026</p>
-                    <p>ValeevDI@fuel.ru / DemoCoord#2026</p>
-                </div>
             </div>
         </div>
     );
