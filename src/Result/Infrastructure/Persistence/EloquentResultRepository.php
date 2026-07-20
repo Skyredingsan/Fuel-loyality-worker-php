@@ -152,4 +152,9 @@ final class EloquentResultRepository implements ResultRepositoryInterface
             ->where('id', $monthlyResultId)
             ->delete();
     }
+
+    public function deleteConfirmedMonthlyResult(int $monthlyResultId): bool
+    {
+        return $this->deleteMonthlyResult($monthlyResultId);
+    }
 }
