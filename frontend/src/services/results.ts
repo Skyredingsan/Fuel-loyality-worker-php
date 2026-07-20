@@ -45,4 +45,8 @@ export const resultsService = {
         const response = await api.get(`/results/user/${userId}/yearly?year=${year}`);
         return response.data;
     },
+
+    async deleteResult(id: number): Promise<void> {
+        await api.delete(`/results/${id}`);
+    },
 };
