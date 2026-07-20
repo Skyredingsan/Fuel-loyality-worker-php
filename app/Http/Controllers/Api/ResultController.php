@@ -40,6 +40,7 @@ final class ResultController extends Controller
         private readonly GetYearlySummaryQuery $getYearlySummary,
         private readonly GetDetailedResultsQuery $getDetailed,
         private readonly GetResultByIdQuery $getResultById,
+        private readonly \FuelPoints\Result\Application\Actions\DeleteResultAction $deleteResult,
     ) {}
 
     /**
@@ -179,6 +180,19 @@ final class ResultController extends Controller
         $results = $this->getDetailed->execute($id);
 
         return IndicatorResultResource::collection($results)->response();
+    }
+
+    /**
+     * Удаление результата (coordinator).
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $this->deleteResult->execute($id);
+            return response()->json(null, 204);
+        } catch (\DomainException $e) {
+            return $this->error($e->getMessage(), 404);
+        }
     }
 
     /**
