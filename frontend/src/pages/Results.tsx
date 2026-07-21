@@ -69,7 +69,7 @@ export const Results: React.FC = () => {
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                {(summary.categories || []).map((cat) => (
+                                {summary.categories.map((cat) => (
                                     <tr key={cat.category_code} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="font-medium text-gray-900">{cat.category_code}</div>
@@ -86,9 +86,7 @@ export const Results: React.FC = () => {
                                 <tr>
                                     <td className="px-6 py-4 font-bold">Итого за период</td>
                                     <td colSpan={3}></td>
-                                    <td className="px-6 py-4 text-right font-bold text-orange-600 text-lg">
-                                        {summary.total_points}
-                                    </td>
+                                    <td className="px-6 py-4 text-right font-bold text-orange-600 text-lg">{summary.total_points}</td>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -107,10 +105,11 @@ export const Results: React.FC = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Показатель</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Факт</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Баллы</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Документ</th>
                                     </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200">
-                                    {(summary.detailed_results || []).map((r: any) => (
+                                    {summary.detailed_results.map((r: any) => (
                                         <tr key={r.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4">
                                                 <div className="font-medium text-gray-900">{r.indicator_code}</div>
@@ -119,6 +118,11 @@ export const Results: React.FC = () => {
                                             <td className="px-6 py-4 text-right">{r.fact_value ?? '—'}</td>
                                             <td className={`px-6 py-4 text-right font-medium ${r.calculated_points >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {r.calculated_points}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                {r.supporting_document_url ? (
+                                                    <a href={r.supporting_document_url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline text-xs">Открыть</a>
+                                                ) : '—'}
                                             </td>
                                         </tr>
                                     ))}

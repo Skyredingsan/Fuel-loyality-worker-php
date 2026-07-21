@@ -24,12 +24,13 @@ final readonly class EnterResultsAction
     public function execute(EnterResultRequestDto $dto, int $expertId): MonthlyResult
     {
         return DB::transaction(function () use ($dto, $expertId): MonthlyResult {
-            // Проверяем, нет ли уже подтверждённого отчёта за этот период
+            // Проверяем, нет ли уже подтверждённого отчёта
             $existing = $this->results->findMonthlyResult($dto->userId, $dto->period);
             if ($existing !== null && $existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
-                throw new \DomainException('Невозможно ввести результаты: за этот период уже есть подтверждённый отчёт. Сначала удалите его.');
+                throw new \DomainException('Невозможно ввести результаты: отчёт за этот период уже подтверждён. Для изменения удалите его.');
             }
 
+            // Находим или создаём ОДИН общий отчёт за месяц
             $monthlyResult = $this->results->findOrCreateMonthlyResult(
                 userId: $dto->userId,
                 expertId: $expertId,
@@ -42,11 +43,11 @@ final readonly class EnterResultsAction
                 $indicatorMap[$ind->code] = $ind;
             }
 
+            // Сохраняем ТОЛЬКО те показатели, которые пришли в запросе.
+            // Чужие показатели НЕ затираются!
             foreach ($dto->results as $input) {
                 if (!isset($indicatorMap[$input->indicatorCode])) {
-                    throw new \DomainException(
-                        "Indicator with code '{$input->indicatorCode}' not found"
-                    );
+                    throw new \DomainException("Indicator with code '{$input->indicatorCode}' not found");
                 }
 
                 $indicator = $indicatorMap[$input->indicatorCode];

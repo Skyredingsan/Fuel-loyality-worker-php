@@ -29,12 +29,12 @@ final readonly class UpdateResultsAction
                 throw new \DomainException("Result #{$resultId} not found");
             }
 
-            // ЗАПРЕТ редактирования подтверждённых отчётов
             if ($existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
-                throw new \DomainException('Невозможно отредактировать: отчёт уже подтверждён. Для изменения удалите его и создайте заново.');
+                throw new \DomainException('Невозможно отредактировать: отчёт уже подтверждён.');
             }
 
-            $this->results->deleteIndicatorResults($resultId);
+            // ВАЖНО: Мы НЕ удаляем старые показатели (deleteIndicatorResults убран).
+            // Мы только обновляем те, которые пришли в запросе.
 
             $allIndicators = $this->kpi->allIndicators();
             $indicatorMap = [];
@@ -44,9 +44,7 @@ final readonly class UpdateResultsAction
 
             foreach ($dto->results as $input) {
                 if (!isset($indicatorMap[$input->indicatorCode])) {
-                    throw new \DomainException(
-                        "Indicator '{$input->indicatorCode}' not found"
-                    );
+                    throw new \DomainException("Indicator '{$input->indicatorCode}' not found");
                 }
 
                 $indicator = $indicatorMap[$input->indicatorCode];
