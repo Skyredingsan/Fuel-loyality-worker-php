@@ -14,7 +14,7 @@ final class DatabaseSeeder extends Seeder
             LevelSeeder::class,
             KpiCategorySeeder::class,
             KpiIndicatorSeeder::class,
-            DefaultUserSeeder::class,
+            DemoUsersSeeder::class,
         ]);
     }
 }

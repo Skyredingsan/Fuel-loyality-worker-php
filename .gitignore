@@ -1,13 +1,15 @@
+# Dependencies
 /vendor
 /node_modules
+/frontend/node_modules
 
+# Environment
 /.env
 /.env.backup
 /.env.production
 /.env.testing
-.phpunit.result.cache
-.phpunit.cache/
 
+# Laravel cache & logs
 /storage/logs/*
 /storage/framework/cache/data/*
 /storage/framework/sessions/*
@@ -21,11 +23,32 @@
 !storage/framework/sessions/.gitkeep
 !storage/framework/views/.gitkeep
 
+# Laravel bootstrap cache
+/bootstrap/cache/*.php
+!bootstrap/cache/.gitkeep
+
+# Frontend build artifacts
+/public/assets/
+/public/index.html
+
+# Test cache
+.phpunit.result.cache
+.phpunit.cache/
+
+# IDE
 .idea/
 *.swp
 *.swo
+
+# OS
 .DS_Store
 Thumbs.db
 
+# Docker
 docker/volumes/
-.phpunit.cache/
+
+# Swagger generated
+storage/api-docs/
+
+# Coverage
+coverage/
