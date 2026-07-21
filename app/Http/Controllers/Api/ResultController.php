@@ -45,36 +45,40 @@ final class ResultController extends Controller
 
     public function enter(EnterResultRequest $request): JsonResponse
     {
-        $dto = EnterResultRequestDto::fromArray($request->validated());
-        $expertId = (int) JWTAuth::user()?->id;
-        $expert = JWTAuth::user();
+        try {
+            $dto = EnterResultRequestDto::fromArray($request->validated());
+            $expertId = (int) JWTAuth::user()?->id;
+            $expert = JWTAuth::user();
 
-        // Эксперт может вводить только по своим категориям
-        if ($expert && $expert->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
-            $expertCategories = [];
-            foreach (config('experts') as $catCode => $emails) {
-                if (in_array($expert->email, $emails)) {
-                    $expertCategories[] = $catCode;
+            // Эксперт может вводить только по своим категориям
+            if ($expert && $expert->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
+                $expertCategories = [];
+                foreach (config('experts') as $catCode => $emails) {
+                    if (in_array($expert->email, $emails)) {
+                        $expertCategories[] = $catCode;
+                    }
+                }
+
+                $allIndicators = $this->kpi->allIndicators();
+                foreach ($dto->results as $input) {
+                    $indicator = $allIndicators->firstWhere('code', $input->indicatorCode);
+                    if ($indicator && !in_array($indicator->category?->code, $expertCategories)) {
+                        return $this->error(
+                            "Вы можете вводить результаты только по категориям: " . implode(', ', $expertCategories),
+                            403
+                        );
+                    }
                 }
             }
 
-            $allIndicators = $this->kpi->allIndicators();
-            foreach ($dto->results as $input) {
-                $indicator = $allIndicators->firstWhere('code', $input->indicatorCode);
-                if ($indicator && !in_array($indicator->category?->code, $expertCategories)) {
-                    return $this->error(
-                        "Вы можете вводить результаты только по категориям: " . implode(', ', $expertCategories),
-                        403
-                    );
-                }
-            }
+            $result = $this->enterResults->execute($dto, $expertId);
+
+            return (new MonthlyResultResource($result))
+                ->response()
+                ->setStatusCode(201);
+        } catch (\DomainException $e) {
+            return $this->error($e->getMessage(), 400);
         }
-
-        $result = $this->enterResults->execute($dto, $expertId);
-
-        return (new MonthlyResultResource($result))
-            ->response()
-            ->setStatusCode(201);
     }
 
     /**

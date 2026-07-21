@@ -13,7 +13,7 @@ export const EnterResults: React.FC = () => {
     const [selectedTm, setSelectedTm] = useState<number | ''>('');
     const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
     const [values, setValues] = useState<Record<string, string>>({});
-    const [documents, setDocuments] = useState<Record<string, string>>({});
+    const [generalDocument, setGeneralDocument] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
@@ -27,10 +27,10 @@ export const EnterResults: React.FC = () => {
             .catch(console.error);
     }, []);
 
-    const handleFileUpload = async (file: File, indicatorCode: string) => {
+    const handleFileUpload = async (file: File) => {
         try {
-            const url = await uploadService.uploadFile(file, 'indicator_result', indicatorCode);
-            setDocuments({ ...documents, [indicatorCode]: url });
+            const url = await uploadService.uploadFile(file, 'indicator_result', String(selectedTm || 0));
+            setGeneralDocument(url);
         } catch (err: any) {
             alert('Ошибка загрузки файла: ' + (err.response?.data?.message || err.message));
         }
@@ -50,7 +50,7 @@ export const EnterResults: React.FC = () => {
                 .map((ind) => ({
                     indicator_code: ind.code,
                     fact_value: values[ind.code] ? parseFloat(values[ind.code]) : null,
-                    document_url: documents[ind.code] || null,
+                    document_url: generalDocument, // Прикрепляем общий файл ко всем показателям
                 }));
 
             if (results.length === 0) {
@@ -66,7 +66,7 @@ export const EnterResults: React.FC = () => {
             await resultsService.enterResults(payload);
             setSuccess('Результаты успешно сохранены!');
             setValues({});
-            setDocuments({});
+            setGeneralDocument(null);
         } catch (err: any) {
             setError(err.response?.data?.message || err.message || 'Ошибка сохранения');
         } finally {
@@ -134,44 +134,49 @@ export const EnterResults: React.FC = () => {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {inds.map((ind) => (
-                                <div key={ind.code} className="border-b pb-4">
+                                <div key={ind.code}>
                                     <label className="block text-sm text-gray-700 mb-1">
                                         {ind.code} — {ind.name}
                                         <span className="text-xs text-gray-500 ml-1">({ind.unit})</span>
                                     </label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={values[ind.code] || ''}
-                                            onChange={(e) =>
-                                                setValues({ ...values, [ind.code]: e.target.value })
-                                            }
-                                            placeholder="Фактическое значение"
-                                            className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
-                                        />
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0];
-                                                if (file) {
-                                                    handleFileUpload(file, ind.code);
-                                                }
-                                            }}
-                                            className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-gray-100 hover:file:bg-gray-200"
-                                        />
-                                    </div>
-                                    {documents[ind.code] && (
-                                        <div className="text-xs text-green-600 mt-1">
-                                            ✓ Файл загружен
-                                        </div>
-                                    )}
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        value={values[ind.code] || ''}
+                                        onChange={(e) =>
+                                            setValues({ ...values, [ind.code]: e.target.value })
+                                        }
+                                        placeholder="Фактическое значение"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                                    />
                                 </div>
                             ))}
                         </div>
                     </div>
                 ))}
+
+                {/* Единое поле загрузки файла внизу */}
+                <div className="border-t pt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Подтверждающий документ (общий для отчёта)
+                    </label>
+                    <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                                handleFileUpload(file);
+                            }
+                        }}
+                        className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    />
+                    {generalDocument && (
+                        <div className="text-sm text-green-600 mt-2">
+                            ✓ Файл загружен и будет прикреплён к отчёту
+                        </div>
+                    )}
+                </div>
 
                 <div className="flex justify-end">
                     <button
