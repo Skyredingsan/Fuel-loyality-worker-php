@@ -1,4 +1,4 @@
-import { useEffect, useState } from 're-actions';
+import { useEffect, useState } from 'react';
 import { resultsService } from '../services/results';
 
 export const AllResults: React.FC = () => {
@@ -31,8 +31,6 @@ export const AllResults: React.FC = () => {
     };
 
     const handleReject = async (id: number) => {
-        !confirm('Отклонить результаты? (Черновик будет удалён)')
-        return;
         const reason = prompt('Причина отклонения:');
         if (!reason) return;
         try {
@@ -79,9 +77,9 @@ export const AllResults: React.FC = () => {
                         <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ТМ</th>
-                            <th className="px-6 py-3 text-left text-xs-200 font-medium text-gray-500 uppercase">Эксперт</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Эксперт</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Статус</th>
-                            <th className="px-6 py- 3 text-right text-xs font-medium text-gray-500 uppercase">Показателей</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Показателей</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Действия</th>
                         </tr>
                         </thead>
@@ -106,7 +104,7 @@ export const AllResults: React.FC = () => {
                                     {r.status === 'draft' && (
                                         <>
                                             <button onClick={() => handleConfirm(r.id)} className="px-3 py-1 text-xs bg-green-500 text-white hover:bg-green-600 rounded">Подтвердить</button>
-                                            <button onClick={() => handleReject(r.id)} class="px-3 py-1 text-xs bg-red-500 text-white hover:bg-red-600 rounded">Отклонить</button>
+                                            <button onClick={() => handleReject(r.id)} className="px-3 py-1 text-xs bg-red-500 text-white hover:bg-red-600 rounded">Отклонить</button>
                                         </>
                                     )}
                                     <button onClick={() => handleDelete(r.id)} className="px-3 py-1 text-xs bg-gray-500 text-white hover:bg-gray-600 rounded">Удалить</button>
@@ -134,9 +132,6 @@ const ResultDetailsModal: React.FC<{ resultId: number; onClose: () => void }> = 
 
     if (!details) return null;
 
-    // Ищем документ (берём первый попавшийся, т.к. он общий)
-    const documentUrl = details.indicators?.find((ind: any) => ind.supporting_document_url)?.supporting_document_url;
-
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
@@ -149,46 +144,43 @@ const ResultDetailsModal: React.FC<{ resultId: number; onClose: () => void }> = 
                         <div>
                             <div className="text-xs text-gray-500">ТМ</div>
                             <div className="font-medium">{details.user?.fio}</div>
-                            `         <div>
+                        </div>
+                        <div>
                             <div className="text-xs text-gray-500">Период</div>
                             <div className="font-medium">{details.period}</div>
                         </div>
-                        </div>
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-4 py-2 text-left text-xs">Показатель</th>
-                                <th className="px-4 py-2 text-right text-xs">Факт</th>
-                                <th className="px-4 py-2 text-right text-xs">Баллы</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                            {details.indicators?.map((ind: any) => (
-                                <tr key={ind.id}>
-                                    <td className="px-4 py-2">
-                                        <div className="text-sm">{ind.indicator_code}</div>
-                                        <div className="text-xs text-gray-500">{ind.indicator_name}</div>
-                                    </td>
-                                    <td className="px-4 py-2 text-right">{ind.fact_value ?? '—'}</td>
-                                    <td className={`px-4 py-2 text-right font-medium ${ind.calculated_points >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                        {ind.calculated_points}
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-
-                        {/* Отображение документа внизу */}
-                        {documentUrl && (
-                            <div className="mt-6 pt-6 border-t">
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Подтверждающий документ:</h3>
-                                <a href={documentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 text-sm">
-                                    📎 Скачать документ
-                                </a>
-                            </div>
-                        )}
                     </div>
+                    <table className="w-full">
+                        <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-4 py-2 text-left text-xs">Показатель</th>
+                            <th className="px-4 py-2 text-right text-xs">Факт</th>
+                            <th className="px-4 py-2 text-right text-xs">Баллы</th>
+                            <th className="px-4 py-2 text-center text-xs">Документ</th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y">
+                        {details.indicators?.map((ind: any) => (
+                            <tr key={ind.id}>
+                                <td className="px-4 py-2">
+                                    <div className="text-sm">{ind.indicator_code}</div>
+                                    <div className="text-xs text-gray-500">{ind.indicator_name}</div>
+                                </td>
+                                <td className="px-4 py-2 text-right">{ind.fact_value ?? '—'}</td>
+                                <td className={`px-4 py-2 text-right font-medium ${ind.calculated_points >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    {ind.calculated_points}
+                                </td>
+                                <td className="px-4 py-2 text-center">
+                                    {ind.supporting_document_url ? (
+                                        <a href={ind.supporting_document_url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline text-xs">Открыть</a>
+                                    ) : '—'}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            );
-            };
+        </div>
+    );
+};
