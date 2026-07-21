@@ -116,7 +116,7 @@ Route::middleware('jwt.auth')->group(function (): void {
 
     // Скачать прикреплённый документ (эксперт/координатор)
     Route::get('/uploads/{type}/{filename}', function (string $type, string $filename) {
-        $path = storage_path('app/private/uploads/' . $type . '/' . $filename);
+        $path = storage_path('app/public/uploads/' . $type . '/' . $filename);
 
         if (!file_exists($path)) {
             abort(404);
