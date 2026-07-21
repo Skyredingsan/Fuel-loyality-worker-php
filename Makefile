@@ -140,3 +140,22 @@ clean: ## Удалить контейнеры, тома и кеши (⚠ уда�
 	$(DC) down -v
 	rm -rf vendor storage/logs/*.log bootstrap/cache/*.php
 	@echo "$(RED)⚠ Всё очищено. Запусти 'make install' заново$(RESET)"
+
+## ─── Качество кода ────────────────────────────────────────────
+
+pint: ## Проверить стиль кода (Pint)
+	$(APP) vendor/bin/pint --test
+
+pint-fix: ## Исправить стиль кода (Pint)
+	$(APP) vendor/bin/pint
+
+stan: ## Запустить PHPStan
+	$(APP) vendor/bin/phpstan analyse --memory-limit=2G
+
+rector: ## Запустить Rector (dry-run)
+	$(APP) vendor/bin/rector process --dry-run
+
+rector-fix: ## Применить изменения Rector
+	$(APP) vendor/bin/rector process
+
+qa: pint stan rector ## Запустить все проверки (Pint + PHPStan + Rector)

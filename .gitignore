@@ -52,3 +52,7 @@ storage/api-docs/
 
 # Coverage
 coverage/
+
+# Tool caches
+/var/*
+!/var/.gitkeep
