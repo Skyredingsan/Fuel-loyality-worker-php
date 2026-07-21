@@ -114,6 +114,17 @@ Route::middleware('jwt.auth')->group(function (): void {
     Route::delete('/upload/{type}/{filename}', [FileController::class, 'destroy'])
         ->middleware('role:expert,coordinator');
 
+    // Скачать прикреплённый документ (эксперт/координатор)
+    Route::get('/uploads/{type}/{filename}', function (string $type, string $filename) {
+        $path = storage_path('app/private/uploads/' . $type . '/' . $filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->download($path, $filename);
+    })->where('type', '[a-z_]+')->where('filename', '[a-zA-Z0-9_.\-]+');
+
     // Reports (CSV export)
     Route::post('/reports/export',           [ReportController::class, 'export'])
         ->middleware('role:coordinator');

@@ -128,6 +128,20 @@ export const Results: React.FC = () => {
                                     ))}
                                     </tbody>
                                 </table>
+                                {/* Отображение документа внизу */}
+                                {summary.detailed_results?.some(r => r.supporting_document_url) && (
+                                    <div className="mt-6 pt-6 border-t">
+                                        <h3 className="text-sm font-medium text-gray-700 mb-2">Подтверждающий документ:</h3>
+                                        <a
+                                            href={summary.detailed_results.find(r => r.supporting_document_url)?.supporting_document_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 text-sm"
+                                        >
+                                            📎 Скачать документ
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
