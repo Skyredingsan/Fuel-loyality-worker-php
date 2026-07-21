@@ -13,9 +13,6 @@ use FuelPoints\Result\Domain\Services\ScoreCalculator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
-/**
- * Action: ввод результатов за месяц (вызывается экспертом/координатором).
- */
 final readonly class EnterResultsAction
 {
     public function __construct(
@@ -27,6 +24,12 @@ final readonly class EnterResultsAction
     public function execute(EnterResultRequestDto $dto, int $expertId): MonthlyResult
     {
         return DB::transaction(function () use ($dto, $expertId): MonthlyResult {
+            // Проверяем, нет ли уже подтверждённого отчёта за этот период
+            $existing = $this->results->findMonthlyResult($dto->userId, $dto->period);
+            if ($existing !== null && $existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
+                throw new \DomainException('Невозможно ввести результаты: за этот период уже есть подтверждённый отчёт. Сначала удалите его.');
+            }
+
             $monthlyResult = $this->results->findOrCreateMonthlyResult(
                 userId: $dto->userId,
                 expertId: $expertId,
@@ -58,7 +61,6 @@ final readonly class EnterResultsAction
                 );
             }
 
-            // Диспатчим событие (слушатели: Notifications)
             Event::dispatch(new ResultsEntered(
                 monthlyResultId: $monthlyResult->id,
                 userId: $dto->userId,

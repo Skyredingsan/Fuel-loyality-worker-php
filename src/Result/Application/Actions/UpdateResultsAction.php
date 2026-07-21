@@ -29,8 +29,9 @@ final readonly class UpdateResultsAction
                 throw new \DomainException("Result #{$resultId} not found");
             }
 
-            if (!$existing->status->canBeEdited()) {
-                throw new \DomainException('Only draft results can be updated');
+            // ЗАПРЕТ редактирования подтверждённых отчётов
+            if ($existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
+                throw new \DomainException('Невозможно отредактировать: отчёт уже подтверждён. Для изменения удалите его и создайте заново.');
             }
 
             $this->results->deleteIndicatorResults($resultId);

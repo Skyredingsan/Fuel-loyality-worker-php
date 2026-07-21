@@ -43,14 +43,24 @@ final class KpiController extends Controller
         );
     }
 
-    /**
-     * Список всех показателей KPI.
-     */
     public function indicators(): JsonResponse
     {
-        return KpiIndicatorResource::collection(
-            $this->kpi->allIndicators()
-        )->response();
+        $allIndicators = $this->kpi->allIndicators();
+
+        $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
+        if ($user && $user->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
+            $expertCategories = [];
+            foreach (config('experts') as $catCode => $emails) {
+                if (in_array($user->email, $emails)) {
+                    $expertCategories[] = $catCode;
+                }
+            }
+            $allIndicators = $allIndicators->filter(function ($ind) use ($expertCategories) {
+                return in_array($ind->category?->code, $expertCategories);
+            });
+        }
+
+        return KpiIndicatorResource::collection($allIndicators)->response();
     }
 
     /**

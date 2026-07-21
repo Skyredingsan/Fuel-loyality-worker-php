@@ -15,6 +15,10 @@ export const resultsService = {
         await api.post(`/results/${id}/reject`, { reason });
     },
 
+    async deleteResult(id: number): Promise<void> {
+        await api.delete(`/results/${id}`);
+    },
+
     async getResultById(id: number): Promise<any> {
         const response = await api.get(`/results/${id}`);
         return response.data;
@@ -44,9 +48,5 @@ export const resultsService = {
     async getYearlySummary(userId: number, year: number): Promise<any> {
         const response = await api.get(`/results/user/${userId}/yearly?year=${year}`);
         return response.data;
-    },
-
-    async deleteResult(id: number): Promise<void> {
-        await api.delete(`/results/${id}`);
     },
 };

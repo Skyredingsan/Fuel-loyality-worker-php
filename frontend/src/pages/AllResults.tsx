@@ -40,16 +40,16 @@ export const AllResults: React.FC = () => {
             alert(err.response?.data?.message || 'Ошибка');
         }
     };
-    
+
     const handleDelete = async (id: number) => {
         if (!confirm('Удалить результат? Это действие необратимо.')) return;
         try {
-              await resultsService.deleteResult(id);
-              load();
+            await resultsService.deleteResult(id);
+            load();
         } catch (err: any) {
-              alert(err.response?.data?.message || 'Ошибка');
+            alert(err.response?.data?.message || 'Ошибка');
         }
-  };
+    };
 
     return (
         <div className="space-y-6">
@@ -103,7 +103,7 @@ export const AllResults: React.FC = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-right">{r.indicators?.length || 0}</td>
-                                <td className="px-6 py-4 text-right space-x-2">
+                                <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                                     <button
                                         onClick={() => setSelectedResult(r.id)}
                                         className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
@@ -124,14 +124,14 @@ export const AllResults: React.FC = () => {
                                             >
                                                 Отклонить
                                             </button>
-                                            <button
-                                              onClick={() => handleDelete(r.id)}
-                                              className="px-3 py-1 text-xs bg-gray-500 text-white hover:bg-gray-600 rounded"
-                                            >
-                                              Удалить
-                                            </button>
                                         </>
                                     )}
+                                    <button
+                                        onClick={() => handleDelete(r.id)}
+                                        className="px-3 py-1 text-xs bg-gray-500 text-white hover:bg-gray-600 rounded"
+                                    >
+                                        Удалить
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -140,7 +140,6 @@ export const AllResults: React.FC = () => {
                 </div>
             )}
 
-            {/* Модальное окно с деталями */}
             {selectedResult && (
                 <ResultDetailsModal resultId={selectedResult} onClose={() => setSelectedResult(null)} />
             )}

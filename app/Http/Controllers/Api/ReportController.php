@@ -13,18 +13,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @tags Отчёты
- */
 final class ReportController extends Controller
 {
     public function __construct(
         private readonly StartCsvExportAction $startExport,
     ) {}
 
-    /**
-     * Запуск CSV-экспорта за период (асинхронно).
-     */
     public function export(ExportRequest $request): JsonResponse
     {
         $userId = (int) \Tymon\JWTAuth\Facades\JWTAuth::user()?->id;
@@ -41,16 +35,8 @@ final class ReportController extends Controller
         ], 202);
     }
 
-    /**
-     * Статус экспорта.
-     */
     public function showExport(string $id): JsonResponse
     {
-        // Валидация UUID — если не UUID, сразу 404
-        if (!\Illuminate\Support\Str::isUuid($id)) {
-            return $this->error("Export #{$id} not found", 404);
-        }
-
         $export = CsvExport::find($id);
         if ($export === null) {
             return $this->error("Export #{$id} not found", 404);
@@ -70,9 +56,6 @@ final class ReportController extends Controller
         ]);
     }
 
-    /**
-     * Скачивание готового CSV.
-     */
     public function downloadExport(string $id, Request $request): StreamedResponse|JsonResponse
     {
         $export = CsvExport::find($id);
@@ -90,9 +73,14 @@ final class ReportController extends Controller
         }
 
         $filename = basename($export->file_path);
+        $disk = Storage::disk('exports');
 
-        return Storage::disk('exports')->download($export->file_path, $filename, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
+        return response()->streamDownload(function () use ($disk, $export) {
+            echo $disk->get($export->file_path);
+        }, $filename, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length'      => $disk->size($export->file_path),
         ]);
     }
 

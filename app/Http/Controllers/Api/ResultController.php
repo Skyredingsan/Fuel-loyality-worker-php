@@ -43,13 +43,32 @@ final class ResultController extends Controller
         private readonly \FuelPoints\Result\Application\Actions\DeleteResultAction $deleteResult,
     ) {}
 
-    /**
-     * Ввод результатов за месяц (для эксперта/координатора).
-     */
     public function enter(EnterResultRequest $request): JsonResponse
     {
         $dto = EnterResultRequestDto::fromArray($request->validated());
         $expertId = (int) JWTAuth::user()?->id;
+        $expert = JWTAuth::user();
+
+        // Эксперт может вводить только по своим категориям
+        if ($expert && $expert->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
+            $expertCategories = [];
+            foreach (config('experts') as $catCode => $emails) {
+                if (in_array($expert->email, $emails)) {
+                    $expertCategories[] = $catCode;
+                }
+            }
+
+            $allIndicators = $this->kpi->allIndicators();
+            foreach ($dto->results as $input) {
+                $indicator = $allIndicators->firstWhere('code', $input->indicatorCode);
+                if ($indicator && !in_array($indicator->category?->code, $expertCategories)) {
+                    return $this->error(
+                        "Вы можете вводить результаты только по категориям: " . implode(', ', $expertCategories),
+                        403
+                    );
+                }
+            }
+        }
 
         $result = $this->enterResults->execute($dto, $expertId);
 
