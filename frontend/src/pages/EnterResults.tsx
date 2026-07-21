@@ -30,7 +30,8 @@ export const EnterResults: React.FC = () => {
     const handleFileUpload = async (file: File) => {
         try {
             const url = await uploadService.uploadFile(file, 'indicator_result', String(selectedTm || 0));
-            setGeneralDocument(url);
+            // Меняем путь, чтобы скачивание шло через API (для авторизации)
+            setGeneralDocument(url.replace('/uploads/', '/api/uploads/'));
         } catch (err: any) {
             alert('Ошибка загрузки файла: ' + (err.response?.data?.message || err.message));
         }
@@ -50,7 +51,7 @@ export const EnterResults: React.FC = () => {
                 .map((ind) => ({
                     indicator_code: ind.code,
                     fact_value: values[ind.code] ? parseFloat(values[ind.code]) : null,
-                    document_url: generalDocument, // Прикрепляем общий файл ко всем показателям
+                    document_url: generalDocument,
                 }));
 
             if (results.length === 0) {
