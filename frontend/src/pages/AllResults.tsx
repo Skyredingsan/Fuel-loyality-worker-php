@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { resultsService } from '../services/results';
+import api from '../services/api';
 
 export const AllResults: React.FC = () => {
     const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
@@ -183,9 +184,25 @@ const ResultDetailsModal: React.FC<{ resultId: number; onClose: () => void }> = 
                     {documentUrl && (
                         <div className="mt-6 pt-6 border-t">
                             <h3 className="text-sm font-medium text-gray-700 mb-2">Подтверждающий документ:</h3>
-                            <a href={documentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 text-sm">
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const response = await api.get(documentUrl, { responseType: 'blob' });
+                                        const fileUrl = window.URL.createObjectURL(new Blob([response.data]));
+                                        const link = document.createElement('a');
+                                        link.href = fileUrl;
+                                        link.setAttribute('download', documentUrl.split('/').pop() || 'document');
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        link.parentNode?.removeChild(link);
+                                    } catch (err) {
+                                        alert('Ошибка скачивания файла');
+                                    }
+                                }}
+                                className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 text-sm"
+                            >
                                 📎 Скачать документ
-                            </a>
+                            </button>
                         </div>
                     )}
                 </div>

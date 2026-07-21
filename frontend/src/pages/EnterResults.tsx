@@ -30,8 +30,7 @@ export const EnterResults: React.FC = () => {
     const handleFileUpload = async (file: File) => {
         try {
             const url = await uploadService.uploadFile(file, 'indicator_result', String(selectedTm || 0));
-            // Меняем путь, чтобы скачивание шло через API (для авторизации)
-            setGeneralDocument(url.replace('/uploads/', '/api/uploads/'));
+            setGeneralDocument(url);
         } catch (err: any) {
             alert('Ошибка загрузки файла: ' + (err.response?.data?.message || err.message));
         }
