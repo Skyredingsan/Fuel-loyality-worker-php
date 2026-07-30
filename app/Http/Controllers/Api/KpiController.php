@@ -56,7 +56,7 @@ final class KpiController extends Controller
                     $expertCategories[] = $catCode;
                 }
             }
-            $allIndicators = $allIndicators->filter(callback: fn($ind) => in_array(needle: $ind->category?->code, haystack: $expertCategories));
+            $allIndicators = $allIndicators->filter(callback: fn ($ind) => in_array(needle: $ind->category?->code, haystack: $expertCategories));
         }
 
         return KpiIndicatorResource::collection(resource: $allIndicators)->response();

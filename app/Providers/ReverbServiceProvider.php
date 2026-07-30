@@ -17,10 +17,10 @@ final class ReverbServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Авторизация приватного канала пользователя
-        \Illuminate\Support\Facades\Broadcast::channel('user.{id}', fn($user, int $id): bool => (int) $user->id === $id
+        \Illuminate\Support\Facades\Broadcast::channel('user.{id}', fn ($user, int $id): bool => (int) $user->id === $id
             || $user->role === \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR);
 
         // Авторизация канала координаторов
-        \Illuminate\Support\Facades\Broadcast::channel('coordinators', fn($user): bool => $user->role === \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR);
+        \Illuminate\Support\Facades\Broadcast::channel('coordinators', fn ($user): bool => $user->role === \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR);
     }
 }
