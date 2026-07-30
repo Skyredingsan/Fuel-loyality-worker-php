@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
+        DB::statement('CREATE EXTENSION IF NOT EXISTS pg_trgm');
+
         Schema::create('users', static function (Blueprint $table): void {
             $table->id()->comment('PK');
 
