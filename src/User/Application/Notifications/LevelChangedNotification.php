@@ -24,14 +24,14 @@ final class LevelChangedNotification extends Notification implements ShouldQueue
 
     public function via($notifiable): array
     {
-        return app()->environment(environments1: 'testing')
+        return app()->environment('testing')
             ? ['database']
             : ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage())
+        return new MailMessage()
             ->subject(subject: "Поздравляем! Новый уровень: {$this->newLevelName}")
             ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
             ->line(line: "Вы достигли нового уровня: **{$this->newLevelName}**")

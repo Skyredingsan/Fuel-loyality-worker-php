@@ -19,21 +19,21 @@ use Illuminate\Support\Collection;
  *  - актуальный уровень
  *  - детальные результаты по каждому показателю
  */
-final class FullResultSummary
+final readonly class FullResultSummary
 {
     /**
      * @param  Collection<int, CategorySummary>  $categories
      * @param  Collection<int, IndicatorResult>  $detailedResults
      */
     public function __construct(
-        public readonly int $userId,
-        public readonly string $userFio,
-        public readonly string $period,
-        public readonly Collection $categories,
-        public readonly Points $totalPoints,
-        public readonly int $yearlyPoints,
-        public readonly ?Level $level,
-        public readonly Collection $detailedResults,
+        public int $userId,
+        public string $userFio,
+        public string $period,
+        public Collection $categories,
+        public Points $totalPoints,
+        public int $yearlyPoints,
+        public ?Level $level,
+        public Collection $detailedResults,
     ) {
     }
 

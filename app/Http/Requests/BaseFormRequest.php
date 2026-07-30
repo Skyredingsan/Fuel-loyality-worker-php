@@ -19,13 +19,14 @@ abstract class BaseFormRequest extends FormRequest
         return true; // проверка роли делается в middleware
     }
 
+    #[\Override]
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
             response: response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors'  => (new ValidationException(validator: $validator))->errors(),
+                'errors'  => new ValidationException(validator: $validator)->errors(),
                 'code'    => 422,
             ], 422)
         );

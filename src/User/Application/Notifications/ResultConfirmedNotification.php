@@ -29,15 +29,14 @@ final class ResultConfirmedNotification extends Notification implements ShouldQu
      */
     public function via($notifiable): array
     {
-        // В тестах используем только database, чтобы не фейкать mail
-        return app()->environment(environments1: 'testing')
+        return app()->environment('testing')
             ? ['database']
             : ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage())
+        return new MailMessage()
             ->subject(subject: "Результаты за {$this->period} подтверждены")
             ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
             ->line(line: "Ваши результаты за период {$this->period} были подтверждены координатором.")

@@ -10,16 +10,16 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Событие: координатор подтвердил результаты.
  */
-final class ResultConfirmed
+final readonly class ResultConfirmed
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly int $monthlyResultId,
-        public readonly int $userId,
-        public readonly int $yearlyPoints,
-        public readonly int $levelId,
+        public int $monthlyResultId,
+        public int $userId,
+        public int $yearlyPoints,
+        public int $levelId,
     ) {
     }
 }

@@ -34,6 +34,7 @@ class EnterResultRequest extends BaseFormRequest
     /**
      * @return array<string, string>
      */
+    #[\Override]
     public function messages(): array
     {
         return [

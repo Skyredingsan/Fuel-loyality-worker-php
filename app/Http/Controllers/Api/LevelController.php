@@ -37,7 +37,7 @@ final class LevelController extends Controller
         $level = $this->levels->currentUserLevel($userId)
             ?? $this->levels->lowest();
 
-        return (new LevelResource(resource: $level))->response();
+        return new LevelResource(resource: $level)->response();
     }
 
     /**

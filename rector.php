@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use SavinMikhail\AddNamedArgumentsRector\AddNamedArgumentsRector;
+use Rector\Set\ValueObject\LevelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -13,13 +13,10 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/tests',
     ]);
 
+    // Кеш в папку var
     $rectorConfig->cacheDirectory(__DIR__ . '/var/rector');
 
-    $rectorConfig->skip([
-        AddNamedArgumentsRector::class => [
-            __DIR__ . '/src/Report/Application/Services/StartCsvExportAction.php',
-        ],
+    $rectorConfig->sets([
+        LevelSetList::UP_TO_PHP_84,
     ]);
-
-    $rectorConfig->rule(AddNamedArgumentsRector::class);
 };

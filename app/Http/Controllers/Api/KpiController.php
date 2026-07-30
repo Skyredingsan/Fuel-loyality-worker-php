@@ -47,17 +47,16 @@ final class KpiController extends Controller
     {
         $allIndicators = $this->kpi->allIndicators();
 
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
         $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
         if ($user && $user->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
             $expertCategories = [];
             foreach (config(key: 'experts') as $catCode => $emails) {
-                if (in_array(needle: $user->email, haystack: $emails)) {
+                if (in_array(needle: $user->email, haystack: $emails, strict: true)) {
                     $expertCategories[] = $catCode;
                 }
             }
-            $allIndicators = $allIndicators->filter(callback: function ($ind) use ($expertCategories) {
-                return in_array(needle: $ind->category?->code, haystack: $expertCategories);
-            });
+            $allIndicators = $allIndicators->filter(callback: fn($ind) => in_array(needle: $ind->category?->code, haystack: $expertCategories));
         }
 
         return KpiIndicatorResource::collection(resource: $allIndicators)->response();

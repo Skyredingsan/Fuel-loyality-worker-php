@@ -15,16 +15,17 @@ beforeEach(closure: function (): void {
     ['user' => $this->expert, 'token' => $this->expertToken] = authUser(UserRole::EXPERT);
     ['user' => $this->tm] = authUser(UserRole::TM);
 
-    // Создаём категорию и индикатор для тестов
+    // Создаём категорию ПП (Выполнение плана продаж)
     $this->category = KpiCategory::create([
-        'code'        => 'ПМ',
-        'name'        => 'Продажи и маржа',
+        'code'        => 'ПП',
+        'name'        => 'Выполнение плана продаж',
         'description' => 'Тестовая категория',
     ]);
 
+    // Создаём показатель ПП1
     $this->indicator = KpiIndicator::create([
         'category_id'     => $this->category->id,
-        'code'            => 'ПМ1',
+        'code'            => 'ПП1',
         'name'            => 'Выполнение плана по топливу',
         'description'     => 'Тест',
         'unit'            => '%',
@@ -47,7 +48,7 @@ it(description: 'expert enters results for a TM', closure: function (): void {
             'user_id' => $this->tm->id,
             'period'  => '2026-07',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 
@@ -76,7 +77,7 @@ it(description: 'rejects result entry from TM role', closure: function (): void 
             'user_id' => $this->tm->id,
             'period'  => '2026-07',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ])
         ->assertForbidden();
@@ -88,7 +89,7 @@ it(description: 'validates period format YYYY-MM', closure: function (): void {
             'user_id' => $this->tm->id,
             'period'  => 'July 2026',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ])
         ->assertStatus(422)
@@ -115,7 +116,7 @@ it(description: 'coordinator confirms draft result', closure: function (): void 
             'user_id' => $this->tm->id,
             'period'  => '2026-08',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 
@@ -138,7 +139,7 @@ it(description: 'coordinator rejects draft result with reason', closure: functio
             'user_id' => $this->tm->id,
             'period'  => '2026-09',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 
@@ -159,7 +160,7 @@ it(description: 'rejects rejection with empty reason', closure: function (): voi
             'user_id' => $this->tm->id,
             'period'  => '2026-10',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 
@@ -179,7 +180,7 @@ it(description: 'TM can fetch own results', closure: function (): void {
             'user_id' => $tm->id,
             'period'  => '2026-11',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 

@@ -25,14 +25,15 @@ final class EloquentResultRepository implements ResultRepositoryInterface
         int $expertId,
         Period $period,
     ): MonthlyResult {
+        // Атомарный upsert через INSERT ... ON CONFLICT
         DB::table('monthly_results')->upsert(
             values: [
                 'user_id'    => $userId,
                 'expert_id'  => $expertId,
                 'period'     => $period->firstDay()->format(format: 'Y-m-d'),
                 'status'     => ResultStatus::DRAFT->value,
-                'created_at' => now(), // ← ДОБАВЛЕНО
-                'updated_at' => now(),
+                'created_at' => now()->toDateTimeString(), // ← ИСПРАВЛЕНО
+                'updated_at' => now()->toDateTimeString(),
             ],
             uniqueBy: ['user_id', 'period'],
             update: ['expert_id', 'updated_at'],
@@ -103,8 +104,8 @@ final class EloquentResultRepository implements ResultRepositoryInterface
                 'fact_value'              => $factValue,
                 'calculated_points'       => $calculatedPoints,
                 'supporting_document_url' => $documentUrl,
-                'created_at'              => now(), // ← ДОБАВЛЕНО
-                'updated_at'              => now(),
+                'created_at'              => now()->toDateTimeString(), // ← ИСПРАВЛЕНО
+                'updated_at'              => now()->toDateTimeString(),
             ],
             uniqueBy: ['monthly_result_id', 'indicator_id'],
             update: [

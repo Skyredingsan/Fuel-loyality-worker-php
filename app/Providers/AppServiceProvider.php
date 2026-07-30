@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         // ScoreCalculator — pure service, можно как singleton

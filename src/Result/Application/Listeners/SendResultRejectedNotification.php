@@ -9,10 +9,10 @@ use FuelPoints\User\Application\Notifications\ResultRejectedNotification;
 use FuelPoints\User\Domain\Repositories\UserRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-final class SendResultRejectedNotification implements ShouldQueue
+final readonly class SendResultRejectedNotification implements ShouldQueue
 {
     public function __construct(
-        private readonly UserRepositoryInterface $users,
+        private UserRepositoryInterface $users,
     ) {
     }
 

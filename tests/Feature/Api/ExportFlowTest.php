@@ -7,27 +7,22 @@ use FuelPoints\Kpi\Domain\Models\KpiCategory;
 use FuelPoints\Kpi\Domain\Models\KpiIndicator;
 use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 
 uses(classAndTraits1: RefreshDatabase::class);
 
 beforeEach(closure: function (): void {
-    // Фейкаем диски для экспорта
-    Storage::fake(disk: 'exports');
-    Storage::fake(disk: 'uploads');
-
     ['user' => $this->coordinator, 'token' => $this->token] = authUser(UserRole::COORDINATOR);
 
-    // Создаём минимальные данные для экспорта
+    // Создаём минимальные данные для экспорта (категория ПП)
     $category = KpiCategory::create([
-        'code'        => 'ПМ',
-        'name'        => 'Продажи и маржа',
+        'code'        => 'ПП',
+        'name'        => 'Выполнение плана продаж',
         'description' => 'Тестовая категория',
     ]);
 
     KpiIndicator::create([
         'category_id'     => $category->id,
-        'code'            => 'ПМ1',
+        'code'            => 'ПП1',
         'name'            => 'Выполнение плана',
         'description'     => 'Тест',
         'unit'            => '%',
@@ -47,7 +42,7 @@ beforeEach(closure: function (): void {
             'user_id' => $tm->id,
             'period'  => '2026-07',
             'results' => [
-                ['indicator_code' => 'ПМ1', 'fact_value' => 95.0],
+                ['indicator_code' => 'ПП1', 'fact_value' => 95.0],
             ],
         ]);
 });
@@ -61,9 +56,9 @@ it(description: 'starts export and returns export_id', closure: function (): voi
     $response->assertAccepted()
         ->assertJsonStructure(['success', 'export_id', 'status', 'period', 'check_url'])
         ->assertJsonPath('period', '2026-07')
-        ->assertJsonPath('status', 'pending');  // ← первоначальный статус
+        ->assertJsonPath('status', 'pending');
 
-    // С sync queue Job уже выполнен — проверим, что статус стал ready
+    // С sync queue Job уже выполнен — проверим, что статус ready
     $exportId = $response->json('export_id');
     $export = \FuelPoints\Report\Domain\Models\CsvExport::find($exportId);
     expect(value: $export->status)->toBe('ready');

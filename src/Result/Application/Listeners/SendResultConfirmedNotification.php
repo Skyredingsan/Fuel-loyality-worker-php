@@ -14,11 +14,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 /**
  * Слушатель: при подтверждении результатов отправляет ТМ email + database notification.
  */
-final class SendResultConfirmedNotification implements ShouldQueue
+final readonly class SendResultConfirmedNotification implements ShouldQueue
 {
     public function __construct(
-        private readonly UserRepositoryInterface $users,
-        private readonly LevelRepositoryInterface $levels,
+        private UserRepositoryInterface $users,
+        private LevelRepositoryInterface $levels,
     ) {
     }
 

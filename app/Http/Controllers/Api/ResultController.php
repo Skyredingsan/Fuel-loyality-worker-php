@@ -10,6 +10,7 @@ use App\Http\Requests\Result\RejectResultRequest;
 use App\Http\Resources\FullSummaryResource;
 use App\Http\Resources\IndicatorResultResource;
 use App\Http\Resources\MonthlyResultResource;
+use FuelPoints\Kpi\Domain\Repositories\KpiRepositoryInterface;
 use FuelPoints\Result\Application\Actions\ConfirmResultAction;
 use FuelPoints\Result\Application\Actions\EnterResultsAction;
 use FuelPoints\Result\Application\Actions\RejectResultAction;
@@ -21,6 +22,7 @@ use FuelPoints\Result\Application\Queries\GetMonthlyResultsByPeriodQuery;
 use FuelPoints\Result\Application\Queries\GetResultByIdQuery;
 use FuelPoints\Result\Application\Queries\GetYearlySummaryQuery;
 use FuelPoints\Shared\Domain\ValueObjects\Period;
+use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -40,7 +42,7 @@ final class ResultController extends Controller
         private readonly GetYearlySummaryQuery $getYearlySummary,
         private readonly GetDetailedResultsQuery $getDetailed,
         private readonly GetResultByIdQuery $getResultById,
-        private readonly \FuelPoints\Result\Application\Actions\DeleteResultAction $deleteResult,
+        private readonly KpiRepositoryInterface $kpi, // ← Добавили зависимость
     ) {
     }
 
@@ -48,33 +50,38 @@ final class ResultController extends Controller
     {
         try {
             $dto = EnterResultRequestDto::fromArray(data: $request->validated());
-            $expertId = (int) JWTAuth::user()?->id;
-            $expert = JWTAuth::user();
 
-            // Эксперт может вводить только по своим категориям
-            if ($expert && $expert->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
+            /** @var \FuelPoints\User\Domain\Models\User|null $expert */
+            $expert = JWTAuth::user();
+            $expertId = (int) $expert?->id;
+
+            // Эксперт может вводить только по своим категориям (если он есть в конфиге)
+            if ($expert && $expert->role === UserRole::EXPERT) {
                 $expertCategories = [];
                 foreach (config(key: 'experts') as $catCode => $emails) {
-                    if (in_array(needle: $expert->email, haystack: $emails)) {
+                    if (in_array(needle: $expert->email, haystack: $emails, strict: true)) {
                         $expertCategories[] = $catCode;
                     }
                 }
 
-                $allIndicators = $this->kpi->allIndicators();
-                foreach ($dto->results as $input) {
-                    $indicator = $allIndicators->firstWhere('code', $input->indicatorCode);
-                    if ($indicator && !in_array(needle: $indicator->category?->code, haystack: $expertCategories)) {
-                        return $this->error(
-                            message: 'Вы можете вводить результаты только по категориям: ' . implode(separator: ', ', array: $expertCategories),
-                            status: 403
-                        );
+                // Если для эксперта заданы ограничения, проверяем их
+                if (!empty($expertCategories)) {
+                    $allIndicators = $this->kpi->allIndicators();
+                    foreach ($dto->results as $input) {
+                        $indicator = $allIndicators->firstWhere(key: 'code', operator: $input->indicatorCode);
+                        if ($indicator && !in_array(needle: $indicator->category?->code, haystack: $expertCategories, strict: true)) {
+                            return $this->error(
+                                message: 'Вы можете вводить результаты только по категориям: ' . implode(separator: ', ', array: $expertCategories),
+                                status: 403
+                            );
+                        }
                     }
                 }
             }
 
             $result = $this->enterResults->execute(dto: $dto, expertId: $expertId);
 
-            return (new MonthlyResultResource(resource: $result))
+            return new MonthlyResultResource(resource: $result)
                 ->response()
                 ->setStatusCode(code: 201);
         } catch (\DomainException $e) {
@@ -82,9 +89,6 @@ final class ResultController extends Controller
         }
     }
 
-    /**
-     * Подтверждение результатов координатором.
-     */
     public function confirm(int $id): JsonResponse
     {
         try {
@@ -99,9 +103,6 @@ final class ResultController extends Controller
         }
     }
 
-    /**
-     * Отклонение результатов (с причиной).
-     */
     public function reject(int $id, RejectResultRequest $request): JsonResponse
     {
         try {
@@ -117,9 +118,6 @@ final class ResultController extends Controller
         }
     }
 
-    /**
-     * Получение результата по ID (для редактирования черновика).
-     */
     public function show(int $id): JsonResponse
     {
         $result = $this->getResultById->execute(resultId: $id);
@@ -130,14 +128,15 @@ final class ResultController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * Обновление черновика.
-     */
     public function update(int $id, EnterResultRequest $request): JsonResponse
     {
         try {
             $dto = EnterResultRequestDto::fromArray(data: $request->validated());
-            $expertId = (int) JWTAuth::user()?->id;
+
+            /** @var \FuelPoints\User\Domain\Models\User|null $expert */
+            $expert = JWTAuth::user();
+            $expertId = (int) $expert?->id;
+
             $result = $this->updateResults->execute(resultId: $id, dto: $dto, expertId: $expertId);
 
             return response()->json([
@@ -150,25 +149,22 @@ final class ResultController extends Controller
         }
     }
 
-    /**
-     * Мои результаты (для ТМ).
-     */
     public function my(Request $request): JsonResponse
     {
-        $userId = (int) JWTAuth::user()?->id;
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
+        $user = JWTAuth::user();
+        $userId = (int) $user?->id;
+
         $periodStr = $request->query(key: 'period');
         $period = $periodStr
-            ? Period::fromString(value: $periodStr)
+            ? Period::fromString(value: (string) $periodStr)
             : Period::now();
 
         $summary = $this->getFullSummary->execute(userId: $userId, period: $period);
 
-        return (new FullSummaryResource(resource: $summary))->response();
+        return new FullSummaryResource(resource: $summary)->response();
     }
 
-    /**
-     * Результаты конкретного ТМ за период.
-     */
     public function byUser(int $userId, Request $request): JsonResponse
     {
         $periodStr = (string) $request->query(key: 'period', default: '');
@@ -178,12 +174,9 @@ final class ResultController extends Controller
 
         $summary = $this->getFullSummary->execute(userId: $userId, period: Period::fromString(value: $periodStr));
 
-        return (new FullSummaryResource(resource: $summary))->response();
+        return new FullSummaryResource(resource: $summary)->response();
     }
 
-    /**
-     * Все результаты за период (дашборд координатора).
-     */
     public function index(Request $request): JsonResponse
     {
         $periodStr = (string) $request->query(key: 'period', default: '');
@@ -196,9 +189,6 @@ final class ResultController extends Controller
         return response()->json($results);
     }
 
-    /**
-     * Детальные результаты по MonthlyResult.
-     */
     public function detailed(int $id): JsonResponse
     {
         $results = $this->getDetailed->execute(monthlyResultId: $id);
@@ -206,22 +196,6 @@ final class ResultController extends Controller
         return IndicatorResultResource::collection(resource: $results)->response();
     }
 
-    /**
-     * Удаление результата (coordinator).
-     */
-    public function destroy(int $id): JsonResponse
-    {
-        try {
-            $this->deleteResult->execute(resultId: $id);
-            return response()->json(null, 204);
-        } catch (\DomainException $e) {
-            return $this->error(message: $e->getMessage(), status: 404);
-        }
-    }
-
-    /**
-     * Годовой отчёт пользователя.
-     */
     public function yearly(int $userId, Request $request): JsonResponse
     {
         $year = (int) ($request->query(key: 'year') ?? now()->year);

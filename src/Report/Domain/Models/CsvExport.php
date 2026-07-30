@@ -42,6 +42,7 @@ class CsvExport extends Model
         'rows_count' => 'integer',
     ];
 
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

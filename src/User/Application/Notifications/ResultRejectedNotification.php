@@ -25,14 +25,14 @@ final class ResultRejectedNotification extends Notification implements ShouldQue
 
     public function via($notifiable): array
     {
-        return app()->environment(environments1: 'testing')
+        return app()->environment('testing')
             ? ['database']
             : ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage())
+        return new MailMessage()
             ->subject(subject: "Результаты за {$this->period} отклонены")
             ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
             ->line(line: "Результаты для ТМ **{$this->tmFio}** за период {$this->period} были отклонены.")

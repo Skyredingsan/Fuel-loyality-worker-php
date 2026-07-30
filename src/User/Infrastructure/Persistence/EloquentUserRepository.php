@@ -16,10 +16,10 @@ use Illuminate\Database\Eloquent\Collection;
  * Поскольку 30 юзеров — pagination тут не нужен, возвращаем Collection.
  * Hasher инжектируем, чтобы можно было подменить в тестах.
  */
-final class EloquentUserRepository implements UserRepositoryInterface
+final readonly class EloquentUserRepository implements UserRepositoryInterface
 {
     public function __construct(
-        private readonly Hasher $hasher,
+        private Hasher $hasher,
     ) {
     }
 

@@ -9,10 +9,10 @@ use FuelPoints\User\Application\Notifications\LevelChangedNotification;
 use FuelPoints\User\Domain\Repositories\UserRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-final class SendLevelChangedNotification implements ShouldQueue
+final readonly class SendLevelChangedNotification implements ShouldQueue
 {
     public function __construct(
-        private readonly UserRepositoryInterface $users,
+        private UserRepositoryInterface $users,
     ) {
     }
 

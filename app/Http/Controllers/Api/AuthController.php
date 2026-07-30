@@ -64,6 +64,7 @@ final class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
         $user = JWTAuth::user();
 
         if ($user === null) {
@@ -89,7 +90,7 @@ final class AuthController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         try {
-            $newToken = JWTAuth::refresh(JWTAuth::getToken());
+            $newToken = JWTAuth::parseToken()->refresh();
         } catch (JWTException $e) {
             return $this->error(message: 'Cannot refresh: '.$e->getMessage(), status: 401);
         }
@@ -107,7 +108,8 @@ final class AuthController extends Controller
     public function logout(): JsonResponse
     {
         try {
-            JWTAuth::invalidate(JWTAuth::getToken());
+            JWTAuth::parseToken()->invalidate();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Successfully logged out',

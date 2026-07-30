@@ -13,14 +13,14 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * DTO: сводка по одной категории KPI за период.
  */
-final class CategorySummary
+final readonly class CategorySummary
 {
     public function __construct(
-        public readonly string $categoryCode,
-        public readonly string $categoryName,
-        public readonly Points $basePoints,
-        public readonly Points $extraPoints,
-        public readonly Points $penaltyPoints,
+        public string $categoryCode,
+        public string $categoryName,
+        public Points $basePoints,
+        public Points $extraPoints,
+        public Points $penaltyPoints,
     ) {
     }
 

@@ -18,6 +18,7 @@ class RejectResultRequest extends BaseFormRequest
         ];
     }
 
+    #[\Override]
     public function messages(): array
     {
         return [

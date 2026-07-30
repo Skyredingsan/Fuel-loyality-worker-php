@@ -7,7 +7,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Middleware: проверяет, что у текущего юзера одна из разрешённых ролей.
@@ -26,7 +25,8 @@ final class RequireRoleMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $user = JWTAuth::user();
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
+        $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
 
         if ($user === null) {
             return $this->forbidden(message: 'Unauthenticated');

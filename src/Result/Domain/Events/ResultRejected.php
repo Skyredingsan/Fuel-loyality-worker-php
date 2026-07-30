@@ -13,16 +13,16 @@ use Illuminate\Queue\SerializesModels;
  * Слушатели:
  *   - SendResultRejectedNotification (уведомляет ТМ и эксперта)
  */
-final class ResultRejected
+final readonly class ResultRejected
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly int $userId,
-        public readonly int $expertId,
-        public readonly string $reason,
-        public readonly string $period,
+        public int $userId,
+        public int $expertId,
+        public string $reason,
+        public string $period,
     ) {
     }
 }

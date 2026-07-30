@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
  */
 final class LocalFileRepository implements FileRepositoryInterface
 {
-    private const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
+    private const array ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
 
     public function store(
         UploadedFile $file,

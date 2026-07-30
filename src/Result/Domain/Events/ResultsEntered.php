@@ -11,16 +11,16 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Событие: эксперт ввёл результаты за месяц.
  */
-final class ResultsEntered
+final readonly class ResultsEntered
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly int $monthlyResultId,
-        public readonly int $userId,
-        public readonly int $expertId,
-        public readonly Period $period,
+        public int $monthlyResultId,
+        public int $userId,
+        public int $expertId,
+        public Period $period,
     ) {
     }
 }

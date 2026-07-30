@@ -22,7 +22,9 @@ final class ReportController extends Controller
 
     public function export(ExportRequest $request): JsonResponse
     {
-        $userId = (int) \Tymon\JWTAuth\Facades\JWTAuth::user()?->id;
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
+        $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
+        $userId = (int) $user?->id;
         $period = $request->validated()['period'];
 
         $export = $this->startExport->execute(userId: $userId, period: $period);
@@ -38,6 +40,10 @@ final class ReportController extends Controller
 
     public function showExport(string $id): JsonResponse
     {
+        if (!\Illuminate\Support\Str::isUuid(value: $id)) {
+            return $this->error(message: "Export #{$id} not found", status: 404);
+        }
+
         $export = CsvExport::find($id);
         if ($export === null) {
             return $this->error(message: "Export #{$id} not found", status: 404);
@@ -59,6 +65,10 @@ final class ReportController extends Controller
 
     public function downloadExport(string $id, Request $request): StreamedResponse|JsonResponse
     {
+        if (!\Illuminate\Support\Str::isUuid(value: $id)) {
+            return $this->error(message: "Export #{$id} not found", status: 404);
+        }
+
         $export = CsvExport::find($id);
         if ($export === null) {
             return $this->error(message: "Export #{$id} not found", status: 404);
@@ -68,12 +78,13 @@ final class ReportController extends Controller
             return $this->error(message: "Export not ready yet (status: {$export->status})", status: 409);
         }
 
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
         $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
         if ($export->user_id !== $user?->id && $user?->role !== \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR) {
             return $this->error(message: 'Forbidden', status: 403);
         }
 
-        $filename = basename(path: $export->file_path);
+        $filename = basename(path: (string) $export->file_path);
         $disk = Storage::disk('exports');
 
         return response()->streamDownload(function () use ($disk, $export) {

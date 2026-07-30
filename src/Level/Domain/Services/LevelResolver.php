@@ -10,13 +10,13 @@ use Illuminate\Support\Collection;
 /**
  * Pure domain service: определяет уровень пользователя по годовому количеству баллов.
  */
-final class LevelResolver
+final readonly class LevelResolver
 {
     /**
      * @param Collection<int, Level> $levels  отсортированы по возрастанию min_points
      */
     public function __construct(
-        private readonly Collection $levels,
+        private Collection $levels,
     ) {
     }
 

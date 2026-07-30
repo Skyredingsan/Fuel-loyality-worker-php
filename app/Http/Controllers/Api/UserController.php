@@ -62,7 +62,7 @@ final class UserController extends Controller
             return $this->error(message: "User #{$id} not found", status: 404);
         }
 
-        return (new UserResource(resource: $user))->response();
+        return new UserResource(resource: $user)->response();
     }
 
     /**
@@ -103,6 +103,7 @@ final class UserController extends Controller
      */
     public function destroy(int $id, Request $request): JsonResponse
     {
+        /** @var \FuelPoints\User\Domain\Models\User|null $user */
         $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
         if ($user !== null && (int) $user->id === $id) {
             return $this->error(message: 'Cannot delete yourself', status: 400);
