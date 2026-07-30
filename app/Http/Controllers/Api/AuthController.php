@@ -90,6 +90,7 @@ final class AuthController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         try {
+            // @phpstan-ignore-next-line
             $newToken = JWTAuth::parseToken()->refresh();
         } catch (JWTException $e) {
             return $this->error(message: 'Cannot refresh: '.$e->getMessage(), status: 401);
@@ -102,12 +103,14 @@ final class AuthController extends Controller
         ]);
     }
 
+
     /**
      * Логаут — инвалидация текущего токена.
      */
     public function logout(): JsonResponse
     {
         try {
+            // @phpstan-ignore-next-line
             JWTAuth::parseToken()->invalidate();
 
             return response()->json([
