@@ -19,18 +19,19 @@ final readonly class UpdateResultsAction
         private ResultRepositoryInterface $results,
         private KpiRepositoryInterface $kpi,
         private ScoreCalculator $calculator,
-    ) {}
+    ) {
+    }
 
     public function execute(int $resultId, EnterResultRequestDto $dto, int $expertId): MonthlyResult
     {
         return DB::transaction(function () use ($resultId, $dto, $expertId): MonthlyResult {
             $existing = $this->results->findMonthlyResultById($resultId);
             if ($existing === null) {
-                throw new \DomainException("Result #{$resultId} not found");
+                throw new \DomainException(message: "Result #{$resultId} not found");
             }
 
             if ($existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
-                throw new \DomainException('Невозможно отредактировать: отчёт уже подтверждён.');
+                throw new \DomainException(message: 'Невозможно отредактировать: отчёт уже подтверждён.');
             }
 
             // ВАЖНО: Мы НЕ удаляем старые показатели (deleteIndicatorResults убран).
@@ -44,11 +45,11 @@ final readonly class UpdateResultsAction
 
             foreach ($dto->results as $input) {
                 if (!isset($indicatorMap[$input->indicatorCode])) {
-                    throw new \DomainException("Indicator '{$input->indicatorCode}' not found");
+                    throw new \DomainException(message: "Indicator '{$input->indicatorCode}' not found");
                 }
 
                 $indicator = $indicatorMap[$input->indicatorCode];
-                $points = $this->calculator->calculate($indicator, $input->factValue);
+                $points = $this->calculator->calculate(indicator: $indicator, factValue: $input->factValue);
 
                 $this->results->saveIndicatorResult(
                     monthlyResultId: $resultId,
@@ -66,7 +67,7 @@ final readonly class UpdateResultsAction
                 period: $dto->period,
             ));
 
-            return $existing->fresh(['user', 'expert']);
+            return $existing->fresh(with: ['user', 'expert']);
         });
     }
 }

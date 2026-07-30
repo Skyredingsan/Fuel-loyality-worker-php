@@ -25,13 +25,13 @@ final class EloquentResultRepository implements ResultRepositoryInterface
         int $expertId,
         Period $period,
     ): MonthlyResult {
-        // Атомарный upsert через INSERT ... ON CONFLICT
         DB::table('monthly_results')->upsert(
             values: [
                 'user_id'    => $userId,
                 'expert_id'  => $expertId,
-                'period'     => $period->firstDay()->format('Y-m-d'),
+                'period'     => $period->firstDay()->format(format: 'Y-m-d'),
                 'status'     => ResultStatus::DRAFT->value,
+                'created_at' => now(), // ← ДОБАВЛЕНО
                 'updated_at' => now(),
             ],
             uniqueBy: ['user_id', 'period'],
@@ -39,29 +39,29 @@ final class EloquentResultRepository implements ResultRepositoryInterface
         );
 
         return MonthlyResult::query()
-            ->where('user_id', $userId)
-            ->where('period', $period->firstDay()->format('Y-m-d'))
+            ->where(column: 'user_id', operator: $userId)
+            ->where(column: 'period', operator: $period->firstDay()->format(format: 'Y-m-d'))
             ->firstOrFail();
     }
 
     public function findMonthlyResult(int $userId, Period $period): ?MonthlyResult
     {
         return MonthlyResult::query()
-            ->where('user_id', $userId)
-            ->where('period', $period->firstDay()->format('Y-m-d'))
+            ->where(column: 'user_id', operator: $userId)
+            ->where(column: 'period', operator: $period->firstDay()->format(format: 'Y-m-d'))
             ->first();
     }
 
     public function findMonthlyResultById(int $id): ?MonthlyResult
     {
-        return MonthlyResult::query()->find($id);
+        return MonthlyResult::query()->find(id: $id);
     }
 
     public function monthlyResultsByPeriod(Period $period): Collection
     {
         return MonthlyResult::query()
-            ->with(['user', 'expert'])
-            ->where('period', $period->firstDay()->format('Y-m-d'))
+            ->with(relations: ['user', 'expert'])
+            ->where(column: 'period', operator: $period->firstDay()->format(format: 'Y-m-d'))
             ->orderBy('user_id')
             ->get();
     }
@@ -72,21 +72,21 @@ final class EloquentResultRepository implements ResultRepositoryInterface
         $end   = "{$year}-12-31";
 
         return MonthlyResult::query()
-            ->where('user_id', $userId)
+            ->where(column: 'user_id', operator: $userId)
             ->whereBetween('period', [$start, $end])
-            ->where('status', ResultStatus::CONFIRMED->value)
-            ->orderBy('period')
+            ->where(column: 'status', operator: ResultStatus::CONFIRMED->value)
+            ->orderBy(column: 'period')
             ->get();
     }
 
     public function totalPointsForYear(int $userId, int $year): int
     {
         return (int) DB::table('indicator_results')
-            ->join('monthly_results', 'indicator_results.monthly_result_id', '=', 'monthly_results.id')
-            ->where('monthly_results.user_id', $userId)
-            ->where('monthly_results.status', ResultStatus::CONFIRMED->value)
-            ->whereYear('monthly_results.period', $year)
-            ->sum('indicator_results.calculated_points');
+            ->join(table: 'monthly_results', first: 'indicator_results.monthly_result_id', operator: '=', second: 'monthly_results.id')
+            ->where(column: 'monthly_results.user_id', operator: $userId)
+            ->where(column: 'monthly_results.status', operator: ResultStatus::CONFIRMED->value)
+            ->whereYear(column: 'monthly_results.period', operator: $year)
+            ->sum(column: 'indicator_results.calculated_points');
     }
 
     public function saveIndicatorResult(
@@ -103,6 +103,7 @@ final class EloquentResultRepository implements ResultRepositoryInterface
                 'fact_value'              => $factValue,
                 'calculated_points'       => $calculatedPoints,
                 'supporting_document_url' => $documentUrl,
+                'created_at'              => now(), // ← ДОБАВЛЕНО
                 'updated_at'              => now(),
             ],
             uniqueBy: ['monthly_result_id', 'indicator_id'],
@@ -115,16 +116,16 @@ final class EloquentResultRepository implements ResultRepositoryInterface
         );
 
         return IndicatorResult::query()
-            ->where('monthly_result_id', $monthlyResultId)
-            ->where('indicator_id', $indicatorId)
+            ->where(column: 'monthly_result_id', operator: $monthlyResultId)
+            ->where(column: 'indicator_id', operator: $indicatorId)
             ->firstOrFail();
     }
 
     public function indicatorResults(int $monthlyResultId): Collection
     {
         return IndicatorResult::query()
-            ->with(['indicator.category'])
-            ->where('monthly_result_id', $monthlyResultId)
+            ->with(relations: ['indicator.category'])
+            ->where(column: 'monthly_result_id', operator: $monthlyResultId)
             ->orderBy('indicator_id')
             ->get();
     }
@@ -132,15 +133,15 @@ final class EloquentResultRepository implements ResultRepositoryInterface
     public function deleteIndicatorResults(int $monthlyResultId): void
     {
         DB::table('indicator_results')
-            ->where('monthly_result_id', $monthlyResultId)
+            ->where(column: 'monthly_result_id', operator: $monthlyResultId)
             ->delete();
     }
 
     public function confirmMonthlyResult(int $monthlyResultId): bool
     {
         return (bool) MonthlyResult::query()
-            ->where('id', $monthlyResultId)
-            ->update([
+            ->where(column: 'id', operator: $monthlyResultId)
+            ->update(values: [
                 'status'     => ResultStatus::CONFIRMED->value,
                 'updated_at' => now(),
             ]);
@@ -149,12 +150,12 @@ final class EloquentResultRepository implements ResultRepositoryInterface
     public function deleteMonthlyResult(int $monthlyResultId): bool
     {
         return (bool) MonthlyResult::query()
-            ->where('id', $monthlyResultId)
+            ->where(column: 'id', operator: $monthlyResultId)
             ->delete();
     }
 
     public function deleteConfirmedMonthlyResult(int $monthlyResultId): bool
     {
-        return $this->deleteMonthlyResult($monthlyResultId);
+        return $this->deleteMonthlyResult(monthlyResultId: $monthlyResultId);
     }
 }

@@ -21,7 +21,8 @@ final class FileController extends Controller
         private readonly UploadFileAction $upload,
         private readonly DeleteFileAction $delete,
         private readonly DownloadFileAction $download,
-    ) {}
+    ) {
+    }
 
     /**
      * Загрузка файла (multipart/form-data).
@@ -34,21 +35,21 @@ final class FileController extends Controller
             'entity_id' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $file = $request->file('file');
+        $file = $request->file(key: 'file');
         if (!$file instanceof \Illuminate\Http\UploadedFile) {
-            return $this->error('No file uploaded', 400);
+            return $this->error(message: 'No file uploaded', status: 400);
         }
 
         try {
             $result = $this->upload->execute(
-                $file,
-                $request->input('type'),
-                $request->input('entity_id'),
+                file: $file,
+                type: $request->input(key: 'type'),
+                entityId: $request->input(key: 'entity_id'),
             );
 
             return response()->json($result, 201);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 400);
+            return $this->error(message: $e->getMessage(), status: 400);
         }
     }
 
@@ -58,9 +59,9 @@ final class FileController extends Controller
     public function download(string $type, string $filename): StreamedResponse|JsonResponse
     {
         try {
-            return $this->download->execute($type, $filename);
+            return $this->download->execute(type: $type, filename: $filename);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 
@@ -70,11 +71,11 @@ final class FileController extends Controller
     public function destroy(string $type, string $filename): JsonResponse
     {
         try {
-            $this->delete->execute($type, $filename);
+            $this->delete->execute(type: $type, filename: $filename);
 
             return response()->json(null, 204);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 

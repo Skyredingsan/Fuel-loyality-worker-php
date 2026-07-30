@@ -23,7 +23,7 @@ class KpiIndicatorFactory extends Factory
 
         return [
             'category_id'     => $category->id,
-            'code'            => 'TEST_' . $this->faker->unique()->numberBetween(1000, 9999),
+            'code'            => 'TEST_' . $this->faker->unique()->numberBetween(int1: 1000, int2: 9999),
             'name'            => $this->faker->words(3, true),
             'description'     => $this->faker->sentence(),
             'unit'            => $this->faker->randomElement(['%', 'шт', 'чел']),

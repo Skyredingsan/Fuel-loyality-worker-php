@@ -32,12 +32,12 @@ final class Privileges implements Arrayable, JsonSerializable
             return new self([]);
         }
 
-        $data = json_decode($json, true);
+        $data = json_decode(json: $json, associative: true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException('Invalid privileges JSON: '.json_last_error_msg());
+            throw new RuntimeException(message: 'Invalid privileges JSON: '.json_last_error_msg());
         }
 
-        return new self(is_array($data) ? $data : []);
+        return new self(is_array(value: $data) ? $data : []);
     }
 
     /**
@@ -73,7 +73,7 @@ final class Privileges implements Arrayable, JsonSerializable
 
     public function toJson(): string
     {
-        return json_encode($this->items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode(value: $this->items, flags: JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     public function toArray(): array

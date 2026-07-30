@@ -18,7 +18,8 @@ final readonly class EnterResultRequestDto
         public int $userId,
         public Period $period,
         public array $results,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array<string, mixed>  $data
@@ -26,13 +27,13 @@ final readonly class EnterResultRequestDto
     public static function fromArray(array $data): self
     {
         $results = array_map(
-            IndicatorResultInputDto::fromArray(...),
-            $data['results'] ?? [],
+            callback: IndicatorResultInputDto::fromArray(...),
+            array: $data['results'] ?? [],
         );
 
         return new self(
             userId: (int) $data['user_id'],
-            period: Period::fromString($data['period']),
+            period: Period::fromString(value: $data['period']),
             results: $results,
         );
     }

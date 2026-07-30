@@ -46,7 +46,7 @@ class MonthlyResult extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(related: User::class, foreignKey: 'user_id');
     }
 
     /**
@@ -54,7 +54,7 @@ class MonthlyResult extends Model
      */
     public function expert(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'expert_id');
+        return $this->belongsTo(related: User::class, foreignKey: 'expert_id');
     }
 
     /**
@@ -62,6 +62,6 @@ class MonthlyResult extends Model
      */
     public function indicatorResults(): HasMany
     {
-        return $this->hasMany(IndicatorResult::class, 'monthly_result_id');
+        return $this->hasMany(related: IndicatorResult::class, foreignKey: 'monthly_result_id');
     }
 }

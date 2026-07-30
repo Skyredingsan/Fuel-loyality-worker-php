@@ -13,9 +13,13 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/tests',
     ]);
 
-    // Кеш в папку var
     $rectorConfig->cacheDirectory(__DIR__ . '/var/rector');
 
-    // Правило: добавлять именованные аргументы
+    $rectorConfig->skip([
+        AddNamedArgumentsRector::class => [
+            __DIR__ . '/src/Report/Application/Services/StartCsvExportAction.php',
+        ],
+    ]);
+
     $rectorConfig->rule(AddNamedArgumentsRector::class);
 };

@@ -13,7 +13,7 @@ class UpdateIndicatorRequest extends BaseFormRequest
      */
     public function rules(): array
     {
-        $indicatorId = $this->route('id');
+        $indicatorId = $this->route(param: 'id');
 
         return [
             'category_code'  => ['sometimes', 'required', 'in:ПМ,ОЭК,ЭКЛ,КБ'],

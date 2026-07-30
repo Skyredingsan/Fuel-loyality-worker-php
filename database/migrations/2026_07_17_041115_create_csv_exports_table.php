@@ -14,24 +14,23 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('csv_exports', static function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->uuid(column: 'id')->primary();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
+            $table->foreignId(column: 'user_id')
+                ->constrained(table: 'users')
                 ->cascadeOnDelete()
                 ->comment('Кто запросил экспорт');
 
-            $table->string('period', 7)->comment('YYYY-MM');
-            $table->string('status', 16)->default('pending')
+            $table->string(column: 'period', length: 7)->comment('YYYY-MM');
+            $table->string(column: 'status', length: 16)->default('pending')
                 ->comment('pending | processing | ready | failed');
-            $table->string('file_path')->nullable()->comment('Путь в disk=exports');
-            $table->unsignedBigInteger('rows_count')->default(0);
-            $table->text('error')->nullable();
+            $table->string(column: 'file_path')->nullable()->comment('Путь в disk=exports');
+            $table->unsignedBigInteger(column: 'rows_count')->default(0);
+            $table->text(column: 'error')->nullable();
 
             $table->timestamps();
         });

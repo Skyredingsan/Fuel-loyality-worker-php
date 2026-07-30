@@ -6,9 +6,9 @@ use FuelPoints\Kpi\Domain\Models\KpiIndicator;
 use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+uses(classAndTraits1: RefreshDatabase::class);
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     ['user' => $this->coordinator, 'token' => $this->token] = authUser(UserRole::COORDINATOR);
 
     // Создаём 4 категории и 28 индикаторов (как в seeder)
@@ -27,16 +27,16 @@ beforeEach(function (): void {
     }
 });
 
-it('lists all KPI categories', function (): void {
+it(description: 'lists all KPI categories', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/kpi/categories')
         ->assertOk()
         ->assertJsonCount(4);
 });
 
-it('lists all KPI indicators', function (): void {
+it(description: 'lists all KPI indicators', closure: function (): void {
     // Создаём 2 индикатора
-    KpiIndicator::factory()->count(2)->create();
+    KpiIndicator::factory()->count(count: 2)->create();
 
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/kpi/indicators')
@@ -44,7 +44,7 @@ it('lists all KPI indicators', function (): void {
         ->assertJsonCount(2, 'data');
 });
 
-it('creates new indicator as coordinator', function (): void {
+it(description: 'creates new indicator as coordinator', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/kpi/indicators', [
             'category_code'  => 'ПМ',
@@ -63,7 +63,7 @@ it('creates new indicator as coordinator', function (): void {
     $this->assertDatabaseHas('kpi_indicators', ['code' => 'ПМ999']);
 });
 
-it('validates indicator type constraint', function (): void {
+it(description: 'validates indicator type constraint', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/kpi/indicators', [
             'category_code'  => 'ПМ',
@@ -76,7 +76,7 @@ it('validates indicator type constraint', function (): void {
         ->assertJsonValidationErrors(['indicator_type']);
 });
 
-it('prevents expert from creating indicator', function (): void {
+it(description: 'prevents expert from creating indicator', closure: function (): void {
     ['token' => $expertToken] = authUser(UserRole::EXPERT);
 
     $this->withHeaders(jwtHeader($expertToken))
@@ -92,7 +92,7 @@ it('prevents expert from creating indicator', function (): void {
         ->assertForbidden();
 });
 
-it('deletes indicator', function (): void {
+it(description: 'deletes indicator', closure: function (): void {
     $indicator = KpiIndicator::factory()->create();
 
     $this->withHeaders(jwtHeader($this->token))

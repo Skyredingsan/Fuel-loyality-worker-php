@@ -16,7 +16,8 @@ final class LevelController extends Controller
 {
     public function __construct(
         private readonly LevelRepositoryInterface $levels,
-    ) {}
+    ) {
+    }
 
     /**
      * Список всех уровней.
@@ -24,7 +25,7 @@ final class LevelController extends Controller
     public function index(): JsonResponse
     {
         return LevelResource::collection(
-            $this->levels->all()
+            resource: $this->levels->all()
         )->response();
     }
 
@@ -36,7 +37,7 @@ final class LevelController extends Controller
         $level = $this->levels->currentUserLevel($userId)
             ?? $this->levels->lowest();
 
-        return (new LevelResource($level))->response();
+        return (new LevelResource(resource: $level))->response();
     }
 
     /**
@@ -47,11 +48,11 @@ final class LevelController extends Controller
         $history = $this->levels->userHistory($userId);
 
         return response()->json(
-            $history->map(fn ($h) => [
+            $history->map(callback: fn ($h) => [
                 'id'           => $h->id,
                 'user_id'      => $h->user_id,
                 'level_id'     => $h->level_id,
-                'assigned_at'  => $h->assigned_at->format('Y-m-d'),
+                'assigned_at'  => $h->assigned_at->format(format: 'Y-m-d'),
                 'points_year'  => $h->points_year,
                 'level'        => $h->level ? [
                     'id'                  => $h->level->id,

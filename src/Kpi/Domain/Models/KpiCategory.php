@@ -37,7 +37,7 @@ class KpiCategory extends Model
      */
     public function indicators(): HasMany
     {
-        return $this->hasMany(KpiIndicator::class, 'category_id');
+        return $this->hasMany(related: KpiIndicator::class, foreignKey: 'category_id');
     }
 
     /**

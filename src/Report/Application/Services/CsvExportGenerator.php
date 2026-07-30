@@ -19,7 +19,8 @@ final readonly class CsvExportGenerator
     public function __construct(
         private ResultRepositoryInterface $results,
         private KpiRepositoryInterface $kpi,
-    ) {}
+    ) {
+    }
 
     public function generateForPeriod(Period $period, CsvExport $export): string
     {
@@ -28,13 +29,12 @@ final readonly class CsvExportGenerator
 
         $disk = Storage::disk('exports');
 
-        // Создаём CSV-файл
-        $writer = Writer::createFromPath($disk->path($filename), 'w+');
+        $writer = Writer::createFromPath(path: $disk->path($filename), open_mode: 'w+');
 
-        $writer->setOutputBOM(Writer::BOM_UTF8);
-        $writer->setDelimiter(';');
+        $writer->setOutputBOM(str: Writer::BOM_UTF8);
+        $writer->setDelimiter(delimiter: ';');
 
-        $writer->insertOne([
+        $writer->insertOne(record: [
             'ID',
             'ТМ (ФИО)',
             'Email',
@@ -56,12 +56,12 @@ final readonly class CsvExportGenerator
             $indicatorResults = $this->results->indicatorResults($monthly->id);
 
             foreach ($indicatorResults as $result) {
-                $writer->insertOne([
+                $writer->insertOne(record: [
                     $monthly->id,
                     $monthly->user?->fio ?? '',
                     $monthly->user?->email ?? '',
                     $monthly->user?->cluster_name ?? '',
-                    $monthly->period->format('Y-m'),
+                    $monthly->period->format(format: 'Y-m'),
                     $monthly->status->label(),
                     $result->indicator?->code ?? '',
                     $result->indicator?->name ?? '',

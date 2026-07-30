@@ -25,7 +25,7 @@ final class JwtAuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Пропускаем preflight CORS
-        if ($request->isMethod('OPTIONS')) {
+        if ($request->isMethod(method: 'OPTIONS')) {
             return $next($request);
         }
 
@@ -34,15 +34,15 @@ final class JwtAuthMiddleware
             $user = JWTAuth::authenticate();
 
             if ($user === false || $user === null) {
-                return $this->unauthorized('User not found');
+                return $this->unauthorized(message: 'User not found');
             }
 
-            $request->attributes->set('jwt_user_id', (int) $payload->get('user_id'));
-            $request->attributes->set('jwt_role', $payload->get('role'));
-            $request->attributes->set('jwt_email', $payload->get('email'));
+            $request->attributes->set(key: 'jwt_user_id', value: (int) $payload->get('user_id'));
+            $request->attributes->set(key: 'jwt_role', value: $payload->get('role'));
+            $request->attributes->set(key: 'jwt_email', value: $payload->get('email'));
 
         } catch (JWTException $e) {
-            return $this->unauthorized('Token is invalid or expired: '.$e->getMessage());
+            return $this->unauthorized(message: 'Token is invalid or expired: '.$e->getMessage());
         }
 
         return $next($request);

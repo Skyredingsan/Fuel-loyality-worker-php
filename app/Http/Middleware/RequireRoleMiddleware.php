@@ -29,14 +29,14 @@ final class RequireRoleMiddleware
         $user = JWTAuth::user();
 
         if ($user === null) {
-            return $this->forbidden('Unauthenticated');
+            return $this->forbidden(message: 'Unauthenticated');
         }
 
         $userRole = $user->role->value;
 
-        if (!in_array($userRole, $roles, true)) {
+        if (!in_array(needle: $userRole, haystack: $roles, strict: true)) {
             return $this->forbidden(
-                "Required role: ".implode(' or ', $roles).", got: {$userRole}"
+                message: 'Required role: '.implode(separator: ' or ', array: $roles).", got: {$userRole}"
             );
         }
 

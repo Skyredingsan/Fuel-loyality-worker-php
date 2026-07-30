@@ -16,21 +16,20 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('users', static function (Blueprint $table): void {
             $table->id()->comment('PK');
 
-            $table->string('email')->unique()->comment('Логин (корпоративный email)');
-            $table->string('password_hash')->comment('bcrypt hash');
+            $table->string(column: 'email')->unique()->comment('Логин (корпоративный email)');
+            $table->string(column: 'password_hash')->comment('bcrypt hash');
 
-            $table->string('role', 16)->comment('tm | expert | coordinator');
+            $table->string(column: 'role', length: 16)->comment('tm | expert | coordinator');
 
-            $table->string('fio')->comment('ФИО полностью');
-            $table->string('cluster_name')->nullable()->comment('Название кластера/региона');
-            $table->integer('azs_count')->default(0)->comment('Кол-во АЗС в управлении');
+            $table->string(column: 'fio')->comment('ФИО полностью');
+            $table->string(column: 'cluster_name')->nullable()->comment('Название кластера/региона');
+            $table->integer(column: 'azs_count')->default(0)->comment('Кол-во АЗС в управлении');
 
             $table->timestamps();
             $table->softDeletes();

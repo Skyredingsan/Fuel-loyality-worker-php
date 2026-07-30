@@ -21,5 +21,6 @@ final class ResultsEntered
         public readonly int $userId,
         public readonly int $expertId,
         public readonly Period $period,
-    ) {}
+    ) {
+    }
 }

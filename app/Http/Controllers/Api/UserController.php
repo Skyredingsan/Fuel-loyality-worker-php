@@ -25,20 +25,21 @@ final class UserController extends Controller
         private readonly UserRepositoryInterface $users,
         private readonly CreateUserAction $createUser,
         private readonly UpdateUserAction $updateUser,
-    ) {}
+    ) {
+    }
 
     /**
      * Список всех пользователей (опционально фильтр по роли).
      */
     public function index(Request $request): JsonResponse
     {
-        $role = $request->query('role')
-            ? UserRole::tryFrom((string) $request->query('role'))
+        $role = $request->query(key: 'role')
+            ? UserRole::tryFrom(value: (string) $request->query(key: 'role'))
             : null;
 
         $users = $this->users->all($role);
 
-        return UserResource::collection($users)->response();
+        return UserResource::collection(resource: $users)->response();
     }
 
     /**
@@ -48,7 +49,7 @@ final class UserController extends Controller
     {
         $users = $this->users->allTms();
 
-        return UserResource::collection($users)->response();
+        return UserResource::collection(resource: $users)->response();
     }
 
     /**
@@ -58,10 +59,10 @@ final class UserController extends Controller
     {
         $user = $this->users->findById($id);
         if ($user === null) {
-            return $this->error("User #{$id} not found", 404);
+            return $this->error(message: "User #{$id} not found", status: 404);
         }
 
-        return (new UserResource($user))->response();
+        return (new UserResource(resource: $user))->response();
     }
 
     /**
@@ -70,13 +71,13 @@ final class UserController extends Controller
     public function store(StoreUserRequest $request): JsonResponse
     {
         try {
-            $dto = UserDto::fromArray($request->validated());
+            $dto = UserDto::fromArray(data: $request->validated());
             $password = $request->validated()['password'];
-            $result = $this->createUser->execute($dto, $password);
+            $result = $this->createUser->execute(dto: $dto, password: $password);
 
             return response()->json($result->toArray(), 201);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 409);
+            return $this->error(message: $e->getMessage(), status: 409);
         }
     }
 
@@ -89,11 +90,11 @@ final class UserController extends Controller
             $fields = $request->validated();
             $password = $fields['password'] ?? null;
             unset($fields['password']);
-            $dto = $this->updateUser->execute($id, $fields, $password);
+            $dto = $this->updateUser->execute(id: $id, fields: $fields, newPassword: $password);
 
             return response()->json($dto->toArray());
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 
@@ -104,11 +105,11 @@ final class UserController extends Controller
     {
         $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
         if ($user !== null && (int) $user->id === $id) {
-            return $this->error('Cannot delete yourself', 400);
+            return $this->error(message: 'Cannot delete yourself', status: 400);
         }
 
         if (!$this->users->delete($id)) {
-            return $this->error("User #{$id} not found", 404);
+            return $this->error(message: "User #{$id} not found", status: 404);
         }
 
         return response()->json(null, 204);

@@ -21,27 +21,28 @@ final readonly class ConfirmResultAction
     public function __construct(
         private ResultRepositoryInterface $results,
         private LevelRepositoryInterface $levels,
-    ) {}
+    ) {
+    }
 
     public function execute(int $resultId): void
     {
         DB::transaction(function () use ($resultId): void {
             $monthly = $this->results->findMonthlyResultById($resultId);
             if ($monthly === null) {
-                throw new \DomainException("Result #{$resultId} not found");
+                throw new \DomainException(message: "Result #{$resultId} not found");
             }
 
             $this->results->confirmMonthlyResult($resultId);
 
             // Годовые баллы + уровень
-            $year = (int) $monthly->period->format('Y');
+            $year = (int) $monthly->period->format(format: 'Y');
             $yearlyPoints = $this->results->totalPointsForYear($monthly->user_id, $year);
 
             $allLevels = SupportCollection::make(
-                $this->levels->all()->all()
+                items: $this->levels->all()->all()
             );
-            $resolver = new LevelResolver($allLevels);
-            $newLevel = $resolver->resolve($yearlyPoints);
+            $resolver = new LevelResolver(levels: $allLevels);
+            $newLevel = $resolver->resolve(yearlyPoints: $yearlyPoints);
 
             $currentLevel = $this->levels->currentUserLevel($monthly->user_id);
             $oldLevelId = $currentLevel?->id ?? 0;

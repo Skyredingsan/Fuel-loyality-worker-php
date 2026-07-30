@@ -23,9 +23,6 @@ interface LevelRepositoryInterface
 
     public function assignToUser(int $userId, int $levelId, int $pointsYear): UserLevelHistory;
 
-    /**
-     * Most recent assigned level for user.
-     */
     public function currentUserLevel(int $userId): ?Level;
 
     /**

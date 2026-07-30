@@ -20,7 +20,8 @@ final readonly class UserDto
         public int $azsCount,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -30,7 +31,7 @@ final readonly class UserDto
         return new self(
             id: $data['id'] ?? null,
             email: $data['email'],
-            role: UserRole::from($data['role']),
+            role: UserRole::from(value: $data['role']),
             fio: $data['fio'],
             clusterName: $data['cluster_name'] ?? null,
             azsCount: $data['azs_count'] ?? 0,

@@ -17,14 +17,15 @@ final class ReportController extends Controller
 {
     public function __construct(
         private readonly StartCsvExportAction $startExport,
-    ) {}
+    ) {
+    }
 
     public function export(ExportRequest $request): JsonResponse
     {
         $userId = (int) \Tymon\JWTAuth\Facades\JWTAuth::user()?->id;
         $period = $request->validated()['period'];
 
-        $export = $this->startExport->execute($userId, $period);
+        $export = $this->startExport->execute(userId: $userId, period: $period);
 
         return response()->json([
             'success'    => true,
@@ -39,7 +40,7 @@ final class ReportController extends Controller
     {
         $export = CsvExport::find($id);
         if ($export === null) {
-            return $this->error("Export #{$id} not found", 404);
+            return $this->error(message: "Export #{$id} not found", status: 404);
         }
 
         return response()->json([
@@ -60,19 +61,19 @@ final class ReportController extends Controller
     {
         $export = CsvExport::find($id);
         if ($export === null) {
-            return $this->error("Export #{$id} not found", 404);
+            return $this->error(message: "Export #{$id} not found", status: 404);
         }
 
         if ($export->status !== 'ready' || !$export->file_path) {
-            return $this->error("Export not ready yet (status: {$export->status})", 409);
+            return $this->error(message: "Export not ready yet (status: {$export->status})", status: 409);
         }
 
         $user = \Tymon\JWTAuth\Facades\JWTAuth::user();
         if ($export->user_id !== $user?->id && $user?->role !== \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR) {
-            return $this->error('Forbidden', 403);
+            return $this->error(message: 'Forbidden', status: 403);
         }
 
-        $filename = basename($export->file_path);
+        $filename = basename(path: $export->file_path);
         $disk = Storage::disk('exports');
 
         return response()->streamDownload(function () use ($disk, $export) {

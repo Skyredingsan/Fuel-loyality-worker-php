@@ -7,7 +7,6 @@ namespace FuelPoints\Result\Application\Queries;
 use FuelPoints\Result\Domain\Repositories\ResultRepositoryInterface;
 use FuelPoints\Shared\Domain\ValueObjects\Period;
 use FuelPoints\User\Domain\Repositories\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Query: все результаты за период (для дашборда координатора).
@@ -22,7 +21,8 @@ final readonly class GetMonthlyResultsByPeriodQuery
     public function __construct(
         private ResultRepositoryInterface $results,
         private UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     public function execute(Period $period): array
     {
@@ -38,11 +38,11 @@ final readonly class GetMonthlyResultsByPeriodQuery
 
             $enriched[] = [
                 'id'         => $monthly->id,
-                'period'     => $monthly->period->format('Y-m'),
+                'period'     => $monthly->period->format(format: 'Y-m'),
                 'status'     => $monthly->status->value,
                 'user'       => $user?->only(['id', 'fio', 'email', 'role', 'cluster_name', 'azs_count']),
                 'expert'     => $expert?->only(['id', 'fio', 'email']),
-                'indicators' => $indicators->map(fn ($r) => [
+                'indicators' => $indicators->map(callback: fn ($r) => [
                     'id'                    => $r->id,
                     'indicator_id'          => $r->indicator_id,
                     'indicator_code'        => $r->indicator?->code,

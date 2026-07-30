@@ -42,6 +42,6 @@ final readonly class Points
 
     public static function fromFloat(float $value): self
     {
-        return new self((int) round($value));
+        return new self((int) round(num: $value));
     }
 }

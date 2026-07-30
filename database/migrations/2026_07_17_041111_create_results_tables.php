@@ -14,32 +14,31 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('monthly_results', static function (Blueprint $table): void {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
+            $table->foreignId(column: 'user_id')
+                ->constrained(table: 'users')
                 ->cascadeOnDelete()
                 ->comment('ТМ, по которому заведён результат');
 
-            $table->foreignId('expert_id')
+            $table->foreignId(column: 'expert_id')
                 ->nullable()
-                ->constrained('users')
+                ->constrained(table: 'users')
                 ->nullOnDelete()
                 ->comment('Эксперт, вводивший результат');
 
-            $table->date('period')->comment('Первый день месяца YYYY-MM-01');
+            $table->date(column: 'period')->comment('Первый день месяца YYYY-MM-01');
 
-            $table->string('status', 16)->default('draft')->comment('draft | confirmed');
+            $table->string(column: 'status', length: 16)->default('draft')->comment('draft | confirmed');
 
             $table->timestamps();
 
             // Один результат на пользователя за период
-            $table->unique(['user_id', 'period']);
+            $table->unique(columns: ['user_id', 'period']);
         });
 
         DB::statement("ALTER TABLE monthly_results ADD CONSTRAINT monthly_results_status_check
@@ -54,22 +53,22 @@ return new class extends Migration
         Schema::create('indicator_results', static function (Blueprint $table): void {
             $table->id();
 
-            $table->foreignId('monthly_result_id')
-                ->constrained('monthly_results')
+            $table->foreignId(column: 'monthly_result_id')
+                ->constrained(table: 'monthly_results')
                 ->cascadeOnDelete();
 
-            $table->foreignId('indicator_id')
-                ->constrained('kpi_indicators')
+            $table->foreignId(column: 'indicator_id')
+                ->constrained(table: 'kpi_indicators')
                 ->cascadeOnDelete();
 
-            $table->float('fact_value')->nullable()->comment('Фактическое значение');
-            $table->integer('calculated_points')->default(0)->comment('Расчётные баллы');
+            $table->float(column: 'fact_value')->nullable()->comment('Фактическое значение');
+            $table->integer(column: 'calculated_points')->default(0)->comment('Расчётные баллы');
 
-            $table->string('supporting_document_url')->nullable()->comment('URL подтверждающего документа');
+            $table->string(column: 'supporting_document_url')->nullable()->comment('URL подтверждающего документа');
 
             $table->timestamps();
 
-            $table->unique(['monthly_result_id', 'indicator_id']);
+            $table->unique(columns: ['monthly_result_id', 'indicator_id']);
         });
 
         DB::statement('CREATE INDEX idx_indicator_results_monthly

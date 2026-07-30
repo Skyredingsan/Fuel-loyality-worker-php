@@ -20,16 +20,17 @@ final class EloquentUserRepository implements UserRepositoryInterface
 {
     public function __construct(
         private readonly Hasher $hasher,
-    ) {}
+    ) {
+    }
 
     public function findById(int $id): ?User
     {
-        return User::query()->find($id);
+        return User::query()->find(id: $id);
     }
 
     public function findByEmail(string $email): ?User
     {
-        return User::query()->where('email', $email)->first();
+        return User::query()->where(column: 'email', operator: $email)->first();
     }
 
     public function all(?UserRole $role = null): Collection
@@ -37,7 +38,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
         $q = User::query()->orderBy('fio');
 
         if ($role !== null) {
-            $q->where('role', $role->value);
+            $q->where(column: 'role', operator: $role->value);
         }
 
         return $q->get();
@@ -46,7 +47,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
     public function allTms(): Collection
     {
         return User::query()
-            ->where('role', UserRole::TM->value)
+            ->where(column: 'role', operator: UserRole::TM->value)
             ->orderBy('fio')
             ->get();
     }
@@ -61,9 +62,9 @@ final class EloquentUserRepository implements UserRepositoryInterface
 
     public function update(int $id, array $data): User
     {
-        $user = $this->findById($id);
+        $user = $this->findById(id: $id);
         if ($user === null) {
-            throw new \DomainException("User #{$id} not found");
+            throw new \DomainException(message: "User #{$id} not found");
         }
 
         if (isset($data['password']) && $data['password'] !== '') {
@@ -71,7 +72,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
         }
         unset($data['password']);
 
-        $user->update($data);
+        $user->update(attributes: $data);
         $user->refresh();
 
         return $user;
@@ -79,7 +80,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
 
     public function delete(int $id): bool
     {
-        $user = $this->findById($id);
+        $user = $this->findById(id: $id);
         if ($user === null) {
             return false;
         }

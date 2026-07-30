@@ -64,7 +64,7 @@ class User extends Model implements AuthenticatableContract, JWTSubject
      */
     public function enteredResults(): HasMany
     {
-        return $this->hasMany(MonthlyResult::class, 'expert_id');
+        return $this->hasMany(related: MonthlyResult::class, foreignKey: 'expert_id');
     }
 
     /**
@@ -74,7 +74,7 @@ class User extends Model implements AuthenticatableContract, JWTSubject
      */
     public function monthlyResults(): HasMany
     {
-        return $this->hasMany(MonthlyResult::class, 'user_id');
+        return $this->hasMany(related: MonthlyResult::class, foreignKey: 'user_id');
     }
 
     /**
@@ -82,7 +82,7 @@ class User extends Model implements AuthenticatableContract, JWTSubject
      */
     public function levelHistory(): HasMany
     {
-        return $this->hasMany(UserLevelHistory::class, 'user_id');
+        return $this->hasMany(related: UserLevelHistory::class, foreignKey: 'user_id');
     }
 
     /**

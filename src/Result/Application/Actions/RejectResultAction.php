@@ -16,19 +16,20 @@ final readonly class RejectResultAction
 {
     public function __construct(
         private ResultRepositoryInterface $results,
-    ) {}
+    ) {
+    }
 
     public function execute(int $resultId, string $reason): void
     {
         DB::transaction(function () use ($resultId, $reason): void {
             $monthly = $this->results->findMonthlyResultById($resultId);
             if ($monthly === null) {
-                throw new \DomainException("Result #{$resultId} not found");
+                throw new \DomainException(message: "Result #{$resultId} not found");
             }
 
             $userId = $monthly->user_id;
             $expertId = $monthly->expert_id ?? 0;
-            $period = $monthly->period->format('Y-m');
+            $period = $monthly->period->format(format: 'Y-m');
 
             $this->results->deleteMonthlyResult($resultId);
 

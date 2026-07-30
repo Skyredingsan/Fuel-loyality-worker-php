@@ -22,7 +22,7 @@ class FullSummaryResource extends JsonResource
             'user_id'          => $this->userId,
             'user_fio'         => $this->userFio,
             'period'           => $this->period,
-            'categories'       => $this->categories->map(fn ($c) => $c->toArray())->all(),
+            'categories'       => $this->categories->map(callback: fn ($c) => $c->toArray())->all(),
             'total_points'     => $this->totalForPeriod()->value,
             'yearly_points'    => $this->yearlyPoints,
             'level'            => $this->level ? [
@@ -31,7 +31,7 @@ class FullSummaryResource extends JsonResource
                 'min_points_per_year' => $this->level->min_points_per_year,
                 'privileges'          => $this->level->privileges?->toArray() ?? [],
             ] : null,
-            'detailed_results' => $this->detailedResults->map(fn ($r) => [
+            'detailed_results' => $this->detailedResults->map(callback: fn ($r) => [
                 'id'                      => $r->id,
                 'indicator_id'            => $r->indicator_id,
                 'indicator_code'          => $r->indicator?->code,

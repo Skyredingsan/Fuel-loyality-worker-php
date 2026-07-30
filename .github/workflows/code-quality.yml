@@ -29,8 +29,8 @@ jobs:
       - name: Run Tests (Pest)
         run: vendor/bin/pest
 
-      - name: Run Pint (CS Fixer)
-        run: vendor/bin/pint --test
+      - name: Run PHP CS Fixer
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=2G

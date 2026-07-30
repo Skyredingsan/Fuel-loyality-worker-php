@@ -21,5 +21,6 @@ final class LevelChanged
         public readonly int $newLevelId,
         public readonly string $newLevelName,
         public readonly int $yearlyPoints,
-    ) {}
+    ) {
+    }
 }

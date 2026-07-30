@@ -13,14 +13,15 @@ final class SendResultRejectedNotification implements ShouldQueue
 {
     public function __construct(
         private readonly UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     public function handle(ResultRejected $event): void
     {
         // 1. Уведомляем ТМ
         $tm = $this->users->findById($event->userId);
         if ($tm !== null) {
-            $tm->notify(new ResultRejectedNotification(
+            $tm->notify(instance: new ResultRejectedNotification(
                 period: $event->period,
                 reason: $event->reason,
                 tmFio: $tm->fio,

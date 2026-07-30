@@ -19,7 +19,8 @@ final class SendResultConfirmedNotification implements ShouldQueue
     public function __construct(
         private readonly UserRepositoryInterface $users,
         private readonly LevelRepositoryInterface $levels,
-    ) {}
+    ) {
+    }
 
     public function handle(ResultConfirmed $event): void
     {
@@ -34,7 +35,7 @@ final class SendResultConfirmedNotification implements ShouldQueue
         $monthly = MonthlyResult::find($event->monthlyResultId);
         $period = $monthly?->period->format('Y-m') ?? '—';
 
-        $user->notify(new ResultConfirmedNotification(
+        $user->notify(instance: new ResultConfirmedNotification(
             monthlyResultId: $event->monthlyResultId,
             period: $period,
             yearlyPoints: $event->yearlyPoints,

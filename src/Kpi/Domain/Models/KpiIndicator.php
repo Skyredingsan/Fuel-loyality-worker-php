@@ -59,7 +59,7 @@ class KpiIndicator extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(KpiCategory::class, 'category_id');
+        return $this->belongsTo(related: KpiCategory::class, foreignKey: 'category_id');
     }
 
     /**
@@ -67,7 +67,7 @@ class KpiIndicator extends Model
      */
     public function results(): HasMany
     {
-        return $this->hasMany(IndicatorResult::class, 'indicator_id');
+        return $this->hasMany(related: IndicatorResult::class, foreignKey: 'indicator_id');
     }
 
     /**

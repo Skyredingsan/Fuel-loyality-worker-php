@@ -15,7 +15,8 @@ final readonly class GetResultByIdQuery
 {
     public function __construct(
         private ResultRepositoryInterface $results,
-    ) {}
+    ) {
+    }
 
     public function execute(int $resultId): ?array
     {
@@ -30,9 +31,9 @@ final readonly class GetResultByIdQuery
             'id'         => $monthly->id,
             'user_id'    => $monthly->user_id,
             'user'       => $monthly->user?->only(['id', 'fio', 'email', 'role', 'cluster_name']),
-            'period'     => $monthly->period->format('Y-m'),
+            'period'     => $monthly->period->format(format: 'Y-m'),
             'status'     => $monthly->status->value,
-            'indicators' => $indicators->map(fn ($r) => [
+            'indicators' => $indicators->map(callback: fn ($r) => [
                 'id'                       => $r->id,
                 'indicator_id'             => $r->indicator_id,
                 'indicator_code'           => $r->indicator?->code,

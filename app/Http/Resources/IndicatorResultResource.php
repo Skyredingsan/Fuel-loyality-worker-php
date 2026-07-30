@@ -25,7 +25,7 @@ class IndicatorResultResource extends JsonResource
             'fact_value'              => $this->fact_value,
             'calculated_points'       => $this->calculated_points,
             'supporting_document_url' => $this->supporting_document_url,
-            'indicator'               => $this->whenLoaded('indicator', fn () => new KpiIndicatorResource($this->indicator)),
+            'indicator'               => $this->whenLoaded(relationship: 'indicator', value: fn () => new KpiIndicatorResource(resource: $this->indicator)),
             'created_at'              => $this->created_at?->toIso8601String(),
         ];
     }

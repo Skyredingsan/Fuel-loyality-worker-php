@@ -20,5 +20,6 @@ final class ResultConfirmed
         public readonly int $userId,
         public readonly int $yearlyPoints,
         public readonly int $levelId,
-    ) {}
+    ) {
+    }
 }

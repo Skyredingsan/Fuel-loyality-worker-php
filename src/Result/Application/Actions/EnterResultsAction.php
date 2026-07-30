@@ -19,7 +19,8 @@ final readonly class EnterResultsAction
         private ResultRepositoryInterface $results,
         private KpiRepositoryInterface $kpi,
         private ScoreCalculator $calculator,
-    ) {}
+    ) {
+    }
 
     public function execute(EnterResultRequestDto $dto, int $expertId): MonthlyResult
     {
@@ -27,7 +28,7 @@ final readonly class EnterResultsAction
             // Проверяем, нет ли уже подтверждённого отчёта
             $existing = $this->results->findMonthlyResult($dto->userId, $dto->period);
             if ($existing !== null && $existing->status === \FuelPoints\Result\Domain\Enums\ResultStatus::CONFIRMED) {
-                throw new \DomainException('Невозможно ввести результаты: отчёт за этот период уже подтверждён. Для изменения удалите его.');
+                throw new \DomainException(message: 'Невозможно ввести результаты: отчёт за этот период уже подтверждён. Для изменения удалите его.');
             }
 
             // Находим или создаём ОДИН общий отчёт за месяц
@@ -47,11 +48,11 @@ final readonly class EnterResultsAction
             // Чужие показатели НЕ затираются!
             foreach ($dto->results as $input) {
                 if (!isset($indicatorMap[$input->indicatorCode])) {
-                    throw new \DomainException("Indicator with code '{$input->indicatorCode}' not found");
+                    throw new \DomainException(message: "Indicator with code '{$input->indicatorCode}' not found");
                 }
 
                 $indicator = $indicatorMap[$input->indicatorCode];
-                $points = $this->calculator->calculate($indicator, $input->factValue);
+                $points = $this->calculator->calculate(indicator: $indicator, factValue: $input->factValue);
 
                 $this->results->saveIndicatorResult(
                     monthlyResultId: $monthlyResult->id,
@@ -69,7 +70,7 @@ final readonly class EnterResultsAction
                 period: $dto->period,
             ));
 
-            return $monthlyResult->fresh(['user', 'expert']);
+            return $monthlyResult->fresh(with: ['user', 'expert']);
         });
     }
 }

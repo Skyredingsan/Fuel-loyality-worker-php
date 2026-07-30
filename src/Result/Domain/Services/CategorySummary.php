@@ -21,13 +21,14 @@ final class CategorySummary
         public readonly Points $basePoints,
         public readonly Points $extraPoints,
         public readonly Points $penaltyPoints,
-    ) {}
+    ) {
+    }
 
     public function total(): Points
     {
         return $this->basePoints
-            ->add($this->extraPoints)
-            ->add($this->penaltyPoints);
+            ->add(other: $this->extraPoints)
+            ->add(other: $this->penaltyPoints);
     }
 
     /**
@@ -63,11 +64,11 @@ final class CategorySummary
                 continue;
             }
 
-            $points = new Points($result->calculated_points);
+            $points = new Points(value: $result->calculated_points);
             match ($indicator->indicator_type) {
-                IndicatorType::BASE    => $base    = $base->add($points),
-                IndicatorType::EXTRA   => $extra   = $extra->add($points),
-                IndicatorType::PENALTY => $penalty = $penalty->add($points),
+                IndicatorType::BASE    => $base    = $base->add(other: $points),
+                IndicatorType::EXTRA   => $extra   = $extra->add(other: $points),
+                IndicatorType::PENALTY => $penalty = $penalty->add(other: $points),
             };
         }
 

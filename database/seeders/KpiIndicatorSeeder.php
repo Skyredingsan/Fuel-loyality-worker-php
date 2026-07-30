@@ -73,7 +73,7 @@ final class KpiIndicatorSeeder extends Seeder
 
             $category = KpiCategory::where('code', $catCode)->first();
             if ($category === null) {
-                throw new \RuntimeException("Category '{$catCode}' not found. Run KpiCategorySeeder first.");
+                throw new \RuntimeException(message: "Category '{$catCode}' not found. Run KpiCategorySeeder first.");
             }
 
             KpiIndicator::updateOrCreate(
@@ -93,7 +93,7 @@ final class KpiIndicatorSeeder extends Seeder
         }
 
         // Удаляем старые показатели, которых больше нет в ТЗ
-        $validCodes = array_column($indicators, 1);
+        $validCodes = array_column(array: $indicators, column_key: 1);
         KpiIndicator::whereNotIn('code', $validCodes)->delete();
     }
 }

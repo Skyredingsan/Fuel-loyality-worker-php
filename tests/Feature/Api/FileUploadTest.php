@@ -7,17 +7,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+uses(classAndTraits1: RefreshDatabase::class);
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     ['token' => $this->token] = authUser(UserRole::EXPERT);
-    Storage::fake('uploads');
+    Storage::fake(disk: 'uploads');
 });
 
-it('uploads a PDF file successfully', function (): void {
+it(description: 'uploads a PDF file successfully', closure: function (): void {
     $file = UploadedFile::fake()->createWithContent(
-        'document.pdf',
-        str_repeat('PDF content ', 100)
+        name: 'document.pdf',
+        content: str_repeat(string: 'PDF content ', times: 100)
     );
 
     $response = $this->withHeaders(jwtHeader($this->token))
@@ -31,13 +31,13 @@ it('uploads a PDF file successfully', function (): void {
         ->assertJsonStructure(['url', 'filename', 'size', 'mime_type']);
 
     $url = $response->json('url');
-    expect($url)->toStartWith('/uploads/indicator_result/');
+    expect(value: $url)->toStartWith('/uploads/indicator_result/');
 });
 
-it('rejects disallowed file extension', function (): void {
+it(description: 'rejects disallowed file extension', closure: function (): void {
     $file = UploadedFile::fake()->createWithContent(
-        'malicious.exe',
-        str_repeat('fake exe content', 50)
+        name: 'malicious.exe',
+        content: str_repeat(string: 'fake exe content', times: 50)
     );
 
     $this->withHeaders(jwtHeader($this->token))
@@ -48,9 +48,9 @@ it('rejects disallowed file extension', function (): void {
         ->assertStatus(400);
 });
 
-it('rejects upload larger than 10MB', function (): void {
+it(description: 'rejects upload larger than 10MB', closure: function (): void {
     // Создаём файл 12 МБ
-    $file = UploadedFile::fake()->create('big.pdf', 12000, 'application/pdf');
+    $file = UploadedFile::fake()->create(name: 'big.pdf', kilobytes: 12000, mimeType: 'application/pdf');
 
     $this->withHeaders(jwtHeader($this->token))
         ->post('/api/upload', [
@@ -60,10 +60,10 @@ it('rejects upload larger than 10MB', function (): void {
         ->assertStatus(422);
 });
 
-it('prevents TM from uploading', function (): void {
+it(description: 'prevents TM from uploading', closure: function (): void {
     ['token' => $tmToken] = authUser(UserRole::TM);
 
-    $file = UploadedFile::fake()->create('doc.pdf', 1000, 'application/pdf');
+    $file = UploadedFile::fake()->create(name: 'doc.pdf', kilobytes: 1000, mimeType: 'application/pdf');
 
     $this->withHeaders(jwtHeader($tmToken))
         ->post('/api/upload', [

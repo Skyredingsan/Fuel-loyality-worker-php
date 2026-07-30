@@ -18,7 +18,8 @@ final readonly class GetDetailedResultsQuery
 {
     public function __construct(
         private ResultRepositoryInterface $results,
-    ) {}
+    ) {
+    }
 
     public function execute(int $monthlyResultId): Collection
     {

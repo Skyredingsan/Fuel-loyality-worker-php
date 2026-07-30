@@ -10,14 +10,14 @@ use Tests\TestCase;
 |--------------------------------------------------------------------------
 */
 
-uses(TestCase::class, Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+uses(classAndTraits1: TestCase::class, classAndTraits2: Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->in(targets1: 'Feature');
 
-uses(TestCase::class)
-    ->in('Unit');
+uses(classAndTraits1: TestCase::class)
+    ->in(targets1: 'Unit');
 
-uses(Illuminate\Foundation\Testing\WithFaker::class)
-    ->in('Feature', 'Unit');
+uses(classAndTraits1: Illuminate\Foundation\Testing\WithFaker::class)
+    ->in(targets1: 'Feature', targets2: 'Unit');
 
 // ─── Helpers ────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ function makeIndicator(
     ?int $extraWeight = null,
     ?int $penaltyWeight = null,
 ): \FuelPoints\Kpi\Domain\Models\KpiIndicator {
-    return new \FuelPoints\Kpi\Domain\Models\KpiIndicator([
+    return new \FuelPoints\Kpi\Domain\Models\KpiIndicator(attributes: [
         'indicator_type' => $type,
         'base_value'     => $baseValue,
         'base_weight'    => $baseWeight,
@@ -45,7 +45,7 @@ function makeIndicator(
  */
 function makeLevel(int $minPoints, string $name): \FuelPoints\Level\Domain\Models\Level
 {
-    return new \FuelPoints\Level\Domain\Models\Level([
+    return new \FuelPoints\Level\Domain\Models\Level(attributes: [
         'name'                => $name,
         'min_points_per_year' => $minPoints,
     ]);
@@ -60,7 +60,7 @@ function makeLevel(int $minPoints, string $name): \FuelPoints\Level\Domain\Model
  */
 function authUser(\FuelPoints\User\Domain\Enums\UserRole $role = \FuelPoints\User\Domain\Enums\UserRole::COORDINATOR): array
 {
-    $user = \FuelPoints\User\Domain\Models\User::factory()->create([
+    $user = \FuelPoints\User\Domain\Models\User::factory()->create(attributes: [
         'role'          => $role->value,
         'password_hash' => \Illuminate\Support\Facades\Hash::make('password'),
     ]);

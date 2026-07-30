@@ -23,5 +23,6 @@ final class ResultRejected
         public readonly int $expertId,
         public readonly string $reason,
         public readonly string $period,
-    ) {}
+    ) {
+    }
 }

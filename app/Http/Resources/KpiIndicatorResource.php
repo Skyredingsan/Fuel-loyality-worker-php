@@ -21,8 +21,8 @@ class KpiIndicatorResource extends JsonResource
         return [
             'id'                  => $this->id,
             'category_id'         => $this->category_id,
-            'category_code'       => $this->whenLoaded('category', fn () => $this->category->code),
-            'category_name'       => $this->whenLoaded('category', fn () => $this->category->name),
+            'category_code'       => $this->whenLoaded(relationship: 'category', value: fn () => $this->category->code),
+            'category_name'       => $this->whenLoaded(relationship: 'category', value: fn () => $this->category->name),
             'code'                => $this->code,
             'name'                => $this->name,
             'description'         => $this->description,

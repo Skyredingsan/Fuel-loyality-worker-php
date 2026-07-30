@@ -6,9 +6,9 @@ use FuelPoints\Level\Domain\Models\Level;
 use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+uses(classAndTraits1: RefreshDatabase::class);
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     ['user' => $this->coordinator, 'token' => $this->token] = authUser(UserRole::COORDINATOR);
 
     Level::create([
@@ -28,14 +28,14 @@ beforeEach(function (): void {
     ]);
 });
 
-it('lists all levels', function (): void {
+it(description: 'lists all levels', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/levels')
         ->assertOk()
         ->assertJsonCount(3, 'data');
 });
 
-it('returns lowest level for user without history', function (): void {
+it(description: 'returns lowest level for user without history', closure: function (): void {
     ['user' => $tm] = authUser(UserRole::TM);
 
     $this->withHeaders(jwtHeader($this->token))
@@ -44,7 +44,7 @@ it('returns lowest level for user without history', function (): void {
         ->assertJsonPath('data.name', 'Специалист Трассы');
 });
 
-it('returns empty history for new user', function (): void {
+it(description: 'returns empty history for new user', closure: function (): void {
     ['user' => $tm] = authUser(UserRole::TM);
 
     $this->withHeaders(jwtHeader($this->token))
@@ -53,7 +53,7 @@ it('returns empty history for new user', function (): void {
         ->assertJsonCount(0);
 });
 
-it('returns health check without auth', function (): void {
+it(description: 'returns health check without auth', closure: function (): void {
     $this->getJson('/api/health')
         ->assertOk()
         ->assertJsonPath('status', 'OK');

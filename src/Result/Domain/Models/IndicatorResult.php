@@ -44,7 +44,7 @@ class IndicatorResult extends Model
      */
     public function monthlyResult(): BelongsTo
     {
-        return $this->belongsTo(MonthlyResult::class, 'monthly_result_id');
+        return $this->belongsTo(related: MonthlyResult::class, foreignKey: 'monthly_result_id');
     }
 
     /**
@@ -52,6 +52,6 @@ class IndicatorResult extends Model
      */
     public function indicator(): BelongsTo
     {
-        return $this->belongsTo(KpiIndicator::class, 'indicator_id');
+        return $this->belongsTo(related: KpiIndicator::class, foreignKey: 'indicator_id');
     }
 }

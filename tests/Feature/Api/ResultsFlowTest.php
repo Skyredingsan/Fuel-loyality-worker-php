@@ -8,9 +8,9 @@ use FuelPoints\Kpi\Domain\Models\KpiIndicator;
 use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+uses(classAndTraits1: RefreshDatabase::class);
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     ['user' => $this->coordinator, 'token' => $this->coordToken] = authUser(UserRole::COORDINATOR);
     ['user' => $this->expert, 'token' => $this->expertToken] = authUser(UserRole::EXPERT);
     ['user' => $this->tm] = authUser(UserRole::TM);
@@ -41,7 +41,7 @@ beforeEach(function (): void {
     ]);
 });
 
-it('expert enters results for a TM', function (): void {
+it(description: 'expert enters results for a TM', closure: function (): void {
     $response = $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
             'user_id' => $this->tm->id,
@@ -68,7 +68,7 @@ it('expert enters results for a TM', function (): void {
     ]);
 });
 
-it('rejects result entry from TM role', function (): void {
+it(description: 'rejects result entry from TM role', closure: function (): void {
     ['token' => $tmToken] = authUser(UserRole::TM);
 
     $this->withHeaders(jwtHeader($tmToken))
@@ -82,7 +82,7 @@ it('rejects result entry from TM role', function (): void {
         ->assertForbidden();
 });
 
-it('validates period format YYYY-MM', function (): void {
+it(description: 'validates period format YYYY-MM', closure: function (): void {
     $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
             'user_id' => $this->tm->id,
@@ -95,7 +95,7 @@ it('validates period format YYYY-MM', function (): void {
         ->assertJsonValidationErrors(['period']);
 });
 
-it('rejects non-existent indicator code', function (): void {
+it(description: 'rejects non-existent indicator code', closure: function (): void {
     $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
             'user_id' => $this->tm->id,
@@ -108,7 +108,7 @@ it('rejects non-existent indicator code', function (): void {
         ->assertJsonValidationErrors(['results.0.indicator_code']);
 });
 
-it('coordinator confirms draft result', function (): void {
+it(description: 'coordinator confirms draft result', closure: function (): void {
     // Сначала вводим
     $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
@@ -132,7 +132,7 @@ it('coordinator confirms draft result', function (): void {
     ]);
 });
 
-it('coordinator rejects draft result with reason', function (): void {
+it(description: 'coordinator rejects draft result with reason', closure: function (): void {
     $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
             'user_id' => $this->tm->id,
@@ -153,7 +153,7 @@ it('coordinator rejects draft result with reason', function (): void {
     $this->assertDatabaseMissing('monthly_results', ['id' => $monthlyId]);
 });
 
-it('rejects rejection with empty reason', function (): void {
+it(description: 'rejects rejection with empty reason', closure: function (): void {
     $this->withHeaders(jwtHeader($this->expertToken))
         ->postJson('/api/results/enter', [
             'user_id' => $this->tm->id,
@@ -171,7 +171,7 @@ it('rejects rejection with empty reason', function (): void {
         ->assertJsonValidationErrors(['reason']);
 });
 
-it('TM can fetch own results', function (): void {
+it(description: 'TM can fetch own results', closure: function (): void {
     ['user' => $tm, 'token' => $tmToken] = authUser(UserRole::TM);
 
     $this->withHeaders(jwtHeader($this->expertToken))
@@ -191,7 +191,7 @@ it('TM can fetch own results', function (): void {
         ->assertJsonPath('data.total_points', 50);
 });
 
-it('returns empty summary when no results exist', function (): void {
+it(description: 'returns empty summary when no results exist', closure: function (): void {
     ['user' => $tm, 'token' => $tmToken] = authUser(UserRole::TM);
 
     $this->withHeaders(jwtHeader($tmToken))

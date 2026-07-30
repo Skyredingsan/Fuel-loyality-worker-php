@@ -10,7 +10,8 @@ final readonly class DeleteIndicatorAction
 {
     public function __construct(
         private KpiRepositoryInterface $kpi,
-    ) {}
+    ) {
+    }
 
     public function execute(int $id): bool
     {

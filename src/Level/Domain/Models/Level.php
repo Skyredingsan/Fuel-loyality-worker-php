@@ -38,6 +38,6 @@ class Level extends Model
      */
     public function history(): HasMany
     {
-        return $this->hasMany(UserLevelHistory::class, 'level_id');
+        return $this->hasMany(related: UserLevelHistory::class, foreignKey: 'level_id');
     }
 }

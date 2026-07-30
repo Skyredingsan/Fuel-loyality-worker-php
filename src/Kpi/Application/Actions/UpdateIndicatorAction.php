@@ -11,7 +11,8 @@ final readonly class UpdateIndicatorAction
 {
     public function __construct(
         private KpiRepositoryInterface $kpi,
-    ) {}
+    ) {
+    }
 
     public function execute(int $id, KpiIndicatorDto $dto): KpiIndicatorDto
     {
@@ -28,7 +29,7 @@ final readonly class UpdateIndicatorAction
             'penalty_weight' => $dto->penaltyWeight,
         ]);
 
-        return KpiIndicatorDto::fromArray($indicator->toArray() + [
+        return KpiIndicatorDto::fromArray(data: $indicator->toArray() + [
                 'category_code' => $indicator->category?->code,
                 'category_name' => $indicator->category?->name,
             ]);

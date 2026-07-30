@@ -21,29 +21,30 @@ final readonly class GetYearlySummaryQuery
     public function __construct(
         private ResultRepositoryInterface $results,
         private LevelRepositoryInterface $levels,
-    ) {}
+    ) {
+    }
 
     public function execute(int $userId, int $year): array
     {
         $monthly = $this->results->userResultsForYear($userId, $year);
         $totalPoints = $this->results->totalPointsForYear($userId, $year);
 
-        $allLevels = SupportCollection::make($this->levels->all()->all());
-        $resolver = new LevelResolver($allLevels);
-        $level = $resolver->resolve($totalPoints);
+        $allLevels = SupportCollection::make(items: $this->levels->all()->all());
+        $resolver = new LevelResolver(levels: $allLevels);
+        $level = $resolver->resolve(yearlyPoints: $totalPoints);
 
         return [
             'user_id'      => $userId,
             'year'         => $year,
             'total_points' => $totalPoints,
             'level'        => $level?->only(['id', 'name', 'min_points_per_year', 'privileges']),
-            'months'       => $monthly->map(fn ($m) => [
+            'months'       => $monthly->map(callback: fn ($m) => [
                 'id'           => $m->id,
-                'period'       => $m->period->format('Y-m'),
+                'period'       => $m->period->format(format: 'Y-m'),
                 'status'       => $m->status->value,
                 'expert_fio'   => $m->expert?->fio,
                 'month_points' => $this->results->indicatorResults($m->id)
-                    ->sum('calculated_points'),
+                    ->sum(callback: 'calculated_points'),
             ])->all(),
         ];
     }

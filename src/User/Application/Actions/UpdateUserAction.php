@@ -11,7 +11,8 @@ final readonly class UpdateUserAction
 {
     public function __construct(
         private UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $fields
@@ -20,19 +21,31 @@ final readonly class UpdateUserAction
     {
         $user = $this->users->findById($id);
         if ($user === null) {
-            throw new \DomainException("User #{$id} not found");
+            throw new \DomainException(message: "User #{$id} not found");
         }
 
         $data = [];
-        if (isset($fields['email']))    $data['email'] = $fields['email'];
-        if (isset($fields['role']))     $data['role'] = $fields['role'];
-        if (isset($fields['fio']))      $data['fio'] = $fields['fio'];
-        if (array_key_exists('cluster_name', $fields)) $data['cluster_name'] = $fields['cluster_name'];
-        if (isset($fields['azs_count'])) $data['azs_count'] = (int) $fields['azs_count'];
-        if ($newPassword !== null) $data['password'] = $newPassword;
+        if (isset($fields['email'])) {
+            $data['email'] = $fields['email'];
+        }
+        if (isset($fields['role'])) {
+            $data['role'] = $fields['role'];
+        }
+        if (isset($fields['fio'])) {
+            $data['fio'] = $fields['fio'];
+        }
+        if (array_key_exists(key: 'cluster_name', array: $fields)) {
+            $data['cluster_name'] = $fields['cluster_name'];
+        }
+        if (isset($fields['azs_count'])) {
+            $data['azs_count'] = (int) $fields['azs_count'];
+        }
+        if ($newPassword !== null) {
+            $data['password'] = $newPassword;
+        }
 
         $user = $this->users->update($id, $data);
 
-        return UserDto::fromArray($user->toArray());
+        return UserDto::fromArray(data: $user->toArray());
     }
 }

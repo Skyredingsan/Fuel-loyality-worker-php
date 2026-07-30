@@ -28,7 +28,7 @@ enum UserRole: string
 
     public function canEnterResults(): bool
     {
-        return in_array($this, [self::EXPERT, self::COORDINATOR], true);
+        return in_array(needle: $this, haystack: [self::EXPERT, self::COORDINATOR], strict: true);
     }
 
     public function canManageSystem(): bool

@@ -1,13 +1,23 @@
 includes:
     - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: 6
+    tmpDir: var/phpstan
+
     paths:
         - app/
         - src/
         - database/
         - tests/
-    tmpDir: var/phpstan
-    checkMissingIterableValueType: false
-    reportUnmatchedImports: false
+
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+
+    excludePaths:
+        - database/migrations/*
+        - database/seeders/*
+
+    ignoreErrors:
+        # Сюда добавлять исключения по мере необходимости

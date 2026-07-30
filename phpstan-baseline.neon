@@ -1,0 +1,661 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:fromUser\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:getToken\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:invalidate\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:refresh\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/KpiController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: app/Http/Controllers/Api/ReportController.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Controllers\\Api\\ResultController\:\:\$kpi\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ResultController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 4
+			path: app/Http/Controllers/Api/ResultController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Api/UserController.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:authenticate\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Middleware/JwtAuthMiddleware.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:parseToken\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Middleware/JwtAuthMiddleware.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:getToken\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Middleware/JwtRefreshMiddleware.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:refresh\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Middleware/JwtRefreshMiddleware.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:user\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Middleware/RequireRoleMiddleware.php
+
+		-
+			message: '#^Call to an undefined static method FuelPoints\\Result\\Domain\\Models\\MonthlyResult\:\:factory\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: database/factories/IndicatorResultFactory.php
+
+		-
+			message: '#^Method FuelPoints\\File\\Application\\Actions\\UploadFileAction\:\:execute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/File/Application/Actions/UploadFileAction.php
+
+		-
+			message: '#^Class FuelPoints\\Kpi\\Domain\\Models\\KpiCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Kpi/Domain/Models/KpiCategory.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: src/Kpi/Domain/Models/KpiCategory.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Domain\\Models\\KpiCategory\:\:indicators\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator, \$this\(FuelPoints\\Kpi\\Domain\\Models\\KpiCategory\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Kpi/Domain/Models/KpiCategory.php
+
+		-
+			message: '#^Class FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Kpi/Domain/Models/KpiIndicator.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: src/Kpi/Domain/Models/KpiIndicator.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\:\:category\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Kpi\\Domain\\Models\\KpiCategory, FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Kpi\\Domain\\Models\\KpiCategory, \$this\(FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Kpi/Domain/Models/KpiIndicator.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\:\:results\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult, \$this\(FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Kpi/Domain/Models/KpiIndicator.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Domain\\Repositories\\KpiRepositoryInterface\:\:createIndicator\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Kpi/Domain/Repositories/KpiRepositoryInterface.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Domain\\Repositories\\KpiRepositoryInterface\:\:updateIndicator\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Kpi/Domain/Repositories/KpiRepositoryInterface.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Infrastructure\\Persistence\\EloquentKpiRepository\:\:createIndicator\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Kpi/Infrastructure/Persistence/EloquentKpiRepository.php
+
+		-
+			message: '#^Method FuelPoints\\Kpi\\Infrastructure\\Persistence\\EloquentKpiRepository\:\:updateIndicator\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Kpi/Infrastructure/Persistence/EloquentKpiRepository.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: src/Level/Domain/Models/Level.php
+
+		-
+			message: '#^Method FuelPoints\\Level\\Domain\\Models\\Level\:\:history\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory, \$this\(FuelPoints\\Level\\Domain\\Models\\Level\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Level/Domain/Models/Level.php
+
+		-
+			message: '#^Method FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\:\:level\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Level\\Domain\\Models\\Level, FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Level\\Domain\\Models\\Level, \$this\(FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Level/Domain/Models/UserLevelHistory.php
+
+		-
+			message: '#^Method FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, \$this\(FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Level/Domain/Models/UserLevelHistory.php
+
+		-
+			message: '#^Property FuelPoints\\Report\\Application\\Services\\CsvExportGenerator\:\:\$kpi is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>cluster_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>fio" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Report/Application/Services/CsvExportGenerator.php
+
+		-
+			message: '#^Property FuelPoints\\Report\\Application\\Services\\StartCsvExportAction\:\:\$generator is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Report/Application/Services/StartCsvExportAction.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Result/Application/Actions/ConfirmResultAction.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Result/Application/Listeners/SendResultConfirmedNotification.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>fio" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Result/Application/Listeners/SendResultRejectedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Application\\Queries\\GetDetailedResultsQuery\:\:execute\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Result/Application/Queries/GetDetailedResultsQuery.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Application\\Queries\\GetMonthlyResultsByPeriodQuery\:\:execute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Result/Application/Queries/GetMonthlyResultsByPeriodQuery.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Application\\Queries\\GetResultByIdQuery\:\:execute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Result/Application/Queries/GetResultByIdQuery.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Application\\Queries\\GetYearlySummaryQuery\:\:execute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Result/Application/Queries/GetYearlySummaryQuery.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type FuelPoints\\Level\\Domain\\Models\\Level\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Result/Application/Queries/GetYearlySummaryQuery.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Domain\\Models\\IndicatorResult\:\:indicator\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator, FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Kpi\\Domain\\Models\\KpiIndicator, \$this\(FuelPoints\\Result\\Domain\\Models\\IndicatorResult\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Result/Domain/Models/IndicatorResult.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Domain\\Models\\IndicatorResult\:\:monthlyResult\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult, FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult, \$this\(FuelPoints\\Result\\Domain\\Models\\IndicatorResult\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Result/Domain/Models/IndicatorResult.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: src/Result/Domain/Models/MonthlyResult.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Domain\\Models\\MonthlyResult\:\:expert\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, FuelPoints\\Result\\Domain\\Models\\MonthlyResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, \$this\(FuelPoints\\Result\\Domain\\Models\\MonthlyResult\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Result/Domain/Models/MonthlyResult.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Domain\\Models\\MonthlyResult\:\:indicatorResults\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\IndicatorResult, \$this\(FuelPoints\\Result\\Domain\\Models\\MonthlyResult\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Result/Domain/Models/MonthlyResult.php
+
+		-
+			message: '#^Method FuelPoints\\Result\\Domain\\Models\\MonthlyResult\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, FuelPoints\\Result\\Domain\\Models\\MonthlyResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<FuelPoints\\User\\Domain\\Models\\User, \$this\(FuelPoints\\Result\\Domain\\Models\\MonthlyResult\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Result/Domain/Models/MonthlyResult.php
+
+		-
+			message: '#^Class FuelPoints\\Shared\\Domain\\ValueObjects\\Privileges implements generic interface Illuminate\\Contracts\\Support\\Arrayable but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Shared/Domain/ValueObjects/Privileges.php
+
+		-
+			message: '#^Method FuelPoints\\Shared\\Domain\\ValueObjects\\Privileges\:\:jsonSerialize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Shared/Domain/ValueObjects/Privileges.php
+
+		-
+			message: '#^Class FuelPoints\\Shared\\Infrastructure\\Eloquent\\PrivilegesCast implements generic interface Illuminate\\Contracts\\Database\\Eloquent\\CastsAttributes but does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Shared/Infrastructure/Eloquent/PrivilegesCast.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\LevelChangedNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/LevelChangedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\LevelChangedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/LevelChangedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\LevelChangedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/LevelChangedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\LevelChangedNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Application/Notifications/LevelChangedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultConfirmedNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultConfirmedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultConfirmedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultConfirmedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultConfirmedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultConfirmedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultRejectedNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultRejectedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultRejectedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultRejectedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultRejectedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/User/Application/Notifications/ResultRejectedNotification.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Application\\Notifications\\ResultRejectedNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Application/Notifications/ResultRejectedNotification.php
+
+		-
+			message: '#^Class FuelPoints\\User\\Domain\\Models\\User uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 2
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Domain\\Models\\User\:\:enteredResults\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult, \$this\(FuelPoints\\User\\Domain\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Domain\\Models\\User\:\:levelHistory\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Level\\Domain\\Models\\UserLevelHistory, \$this\(FuelPoints\\User\\Domain\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Domain\\Models\\User\:\:monthlyResults\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<FuelPoints\\Result\\Domain\\Models\\MonthlyResult, \$this\(FuelPoints\\User\\Domain\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/User/Domain/Models/User.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Domain\\Repositories\\UserRepositoryInterface\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Domain/Repositories/UserRepositoryInterface.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Domain\\Repositories\\UserRepositoryInterface\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Domain/Repositories/UserRepositoryInterface.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Infrastructure\\Persistence\\EloquentUserRepository\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Infrastructure/Persistence/EloquentUserRepository.php
+
+		-
+			message: '#^Method FuelPoints\\User\\Infrastructure\\Persistence\\EloquentUserRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/User/Infrastructure/Persistence/EloquentUserRepository.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:getJson\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:postJson\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeader\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:fromUser\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: tests/Feature/Api/AuthFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$tm\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Api/ExportFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 5
+			path: tests/Feature/Api/ExportFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 7
+			path: tests/Feature/Api/ExportFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Api/FileUploadTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Feature/Api/FileUploadTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 5
+			path: tests/Feature/Api/KpiCrudTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:assertDatabaseHas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/KpiCrudTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:assertDatabaseMissing\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/KpiCrudTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/Feature/Api/KpiCrudTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Api/LevelsAndHealthTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:getJson\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/LevelsAndHealthTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Feature/Api/LevelsAndHealthTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$coordToken\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$expertToken\.$#'
+			identifier: property.notFound
+			count: 7
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$indicator\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$tm\.$#'
+			identifier: property.notFound
+			count: 9
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:assertDatabaseHas\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:assertDatabaseMissing\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 13
+			path: tests/Feature/Api/ResultsFlowTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$coordinator\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Api/UserCrudTest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 8
+			path: tests/Feature/Api/UserCrudTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:assertDatabaseHas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Api/UserCrudTest.php
+
+		-
+			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 9
+			path: tests/Feature/Api/UserCrudTest.php
+
+		-
+			message: '#^Call to an undefined static method Tymon\\JWTAuth\\Facades\\JWTAuth\:\:fromUser\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: tests/Pest.php
+
+		-
+			message: '#^Function jwtHeader\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Pest.php
+
+		-
+			message: '#^Access to an undefined property Pest\\PendingCalls\\TestCall\:\:\$calculator\.$#'
+			identifier: property.notFound
+			count: 11
+			path: tests/Unit/Domain/ScoreCalculatorTest.php

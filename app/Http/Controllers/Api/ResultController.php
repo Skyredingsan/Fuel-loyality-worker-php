@@ -41,20 +41,21 @@ final class ResultController extends Controller
         private readonly GetDetailedResultsQuery $getDetailed,
         private readonly GetResultByIdQuery $getResultById,
         private readonly \FuelPoints\Result\Application\Actions\DeleteResultAction $deleteResult,
-    ) {}
+    ) {
+    }
 
     public function enter(EnterResultRequest $request): JsonResponse
     {
         try {
-            $dto = EnterResultRequestDto::fromArray($request->validated());
+            $dto = EnterResultRequestDto::fromArray(data: $request->validated());
             $expertId = (int) JWTAuth::user()?->id;
             $expert = JWTAuth::user();
 
             // Эксперт может вводить только по своим категориям
             if ($expert && $expert->role === \FuelPoints\User\Domain\Enums\UserRole::EXPERT) {
                 $expertCategories = [];
-                foreach (config('experts') as $catCode => $emails) {
-                    if (in_array($expert->email, $emails)) {
+                foreach (config(key: 'experts') as $catCode => $emails) {
+                    if (in_array(needle: $expert->email, haystack: $emails)) {
                         $expertCategories[] = $catCode;
                     }
                 }
@@ -62,22 +63,22 @@ final class ResultController extends Controller
                 $allIndicators = $this->kpi->allIndicators();
                 foreach ($dto->results as $input) {
                     $indicator = $allIndicators->firstWhere('code', $input->indicatorCode);
-                    if ($indicator && !in_array($indicator->category?->code, $expertCategories)) {
+                    if ($indicator && !in_array(needle: $indicator->category?->code, haystack: $expertCategories)) {
                         return $this->error(
-                            "Вы можете вводить результаты только по категориям: " . implode(', ', $expertCategories),
-                            403
+                            message: 'Вы можете вводить результаты только по категориям: ' . implode(separator: ', ', array: $expertCategories),
+                            status: 403
                         );
                     }
                 }
             }
 
-            $result = $this->enterResults->execute($dto, $expertId);
+            $result = $this->enterResults->execute(dto: $dto, expertId: $expertId);
 
-            return (new MonthlyResultResource($result))
+            return (new MonthlyResultResource(resource: $result))
                 ->response()
-                ->setStatusCode(201);
+                ->setStatusCode(code: 201);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 400);
+            return $this->error(message: $e->getMessage(), status: 400);
         }
     }
 
@@ -87,14 +88,14 @@ final class ResultController extends Controller
     public function confirm(int $id): JsonResponse
     {
         try {
-            $this->confirmResult->execute($id);
+            $this->confirmResult->execute(resultId: $id);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Results confirmed successfully',
             ]);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 
@@ -104,7 +105,7 @@ final class ResultController extends Controller
     public function reject(int $id, RejectResultRequest $request): JsonResponse
     {
         try {
-            $this->rejectResult->execute($id, $request->validated()['reason']);
+            $this->rejectResult->execute(resultId: $id, reason: $request->validated()['reason']);
 
             return response()->json([
                 'success' => true,
@@ -112,7 +113,7 @@ final class ResultController extends Controller
                 'reason'  => $request->validated()['reason'],
             ]);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 
@@ -121,9 +122,9 @@ final class ResultController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->getResultById->execute($id);
+        $result = $this->getResultById->execute(resultId: $id);
         if ($result === null) {
-            return $this->error("Result #{$id} not found", 404);
+            return $this->error(message: "Result #{$id} not found", status: 404);
         }
 
         return response()->json($result);
@@ -135,17 +136,17 @@ final class ResultController extends Controller
     public function update(int $id, EnterResultRequest $request): JsonResponse
     {
         try {
-            $dto = EnterResultRequestDto::fromArray($request->validated());
+            $dto = EnterResultRequestDto::fromArray(data: $request->validated());
             $expertId = (int) JWTAuth::user()?->id;
-            $result = $this->updateResults->execute($id, $dto, $expertId);
+            $result = $this->updateResults->execute(resultId: $id, dto: $dto, expertId: $expertId);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Results updated successfully',
-                'data'    => new MonthlyResultResource($result),
+                'data'    => new MonthlyResultResource(resource: $result),
             ]);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 400);
+            return $this->error(message: $e->getMessage(), status: 400);
         }
     }
 
@@ -155,14 +156,14 @@ final class ResultController extends Controller
     public function my(Request $request): JsonResponse
     {
         $userId = (int) JWTAuth::user()?->id;
-        $periodStr = $request->query('period');
+        $periodStr = $request->query(key: 'period');
         $period = $periodStr
-            ? Period::fromString($periodStr)
+            ? Period::fromString(value: $periodStr)
             : Period::now();
 
-        $summary = $this->getFullSummary->execute($userId, $period);
+        $summary = $this->getFullSummary->execute(userId: $userId, period: $period);
 
-        return (new FullSummaryResource($summary))->response();
+        return (new FullSummaryResource(resource: $summary))->response();
     }
 
     /**
@@ -170,14 +171,14 @@ final class ResultController extends Controller
      */
     public function byUser(int $userId, Request $request): JsonResponse
     {
-        $periodStr = (string) $request->query('period', '');
+        $periodStr = (string) $request->query(key: 'period', default: '');
         if ($periodStr === '') {
-            return $this->error('Period parameter is required (YYYY-MM)', 400);
+            return $this->error(message: 'Period parameter is required (YYYY-MM)', status: 400);
         }
 
-        $summary = $this->getFullSummary->execute($userId, Period::fromString($periodStr));
+        $summary = $this->getFullSummary->execute(userId: $userId, period: Period::fromString(value: $periodStr));
 
-        return (new FullSummaryResource($summary))->response();
+        return (new FullSummaryResource(resource: $summary))->response();
     }
 
     /**
@@ -185,12 +186,12 @@ final class ResultController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $periodStr = (string) $request->query('period', '');
+        $periodStr = (string) $request->query(key: 'period', default: '');
         if ($periodStr === '') {
-            return $this->error('Period parameter is required (YYYY-MM)', 400);
+            return $this->error(message: 'Period parameter is required (YYYY-MM)', status: 400);
         }
 
-        $results = $this->getMonthlyResults->execute(Period::fromString($periodStr));
+        $results = $this->getMonthlyResults->execute(period: Period::fromString(value: $periodStr));
 
         return response()->json($results);
     }
@@ -200,9 +201,9 @@ final class ResultController extends Controller
      */
     public function detailed(int $id): JsonResponse
     {
-        $results = $this->getDetailed->execute($id);
+        $results = $this->getDetailed->execute(monthlyResultId: $id);
 
-        return IndicatorResultResource::collection($results)->response();
+        return IndicatorResultResource::collection(resource: $results)->response();
     }
 
     /**
@@ -211,10 +212,10 @@ final class ResultController extends Controller
     public function destroy(int $id): JsonResponse
     {
         try {
-            $this->deleteResult->execute($id);
+            $this->deleteResult->execute(resultId: $id);
             return response()->json(null, 204);
         } catch (\DomainException $e) {
-            return $this->error($e->getMessage(), 404);
+            return $this->error(message: $e->getMessage(), status: 404);
         }
     }
 
@@ -223,8 +224,8 @@ final class ResultController extends Controller
      */
     public function yearly(int $userId, Request $request): JsonResponse
     {
-        $year = (int) ($request->query('year') ?? now()->year);
-        $summary = $this->getYearlySummary->execute($userId, $year);
+        $year = (int) ($request->query(key: 'year') ?? now()->year);
+        $summary = $this->getYearlySummary->execute(userId: $userId, year: $year);
 
         return response()->json($summary);
     }

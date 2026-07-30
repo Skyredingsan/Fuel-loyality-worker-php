@@ -20,7 +20,7 @@ class MonthlyResultFactory extends Factory
         return [
             'user_id'   => \FuelPoints\User\Domain\Models\User::factory(),
             'expert_id' => \FuelPoints\User\Domain\Models\User::factory(),
-            'period'    => $this->faker->dateTimeThisYear()->format('Y-m-01'),
+            'period'    => $this->faker->dateTimeThisYear()->format(format: 'Y-m-01'),
             'status'    => ResultStatus::DRAFT->value,
         ];
     }

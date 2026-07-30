@@ -27,9 +27,9 @@ final class ScoreCalculator
         }
 
         return match ($indicator->indicator_type) {
-            IndicatorType::BASE    => $this->calculateBase($indicator, $factValue),
-            IndicatorType::EXTRA   => $this->calculateExtra($indicator, $factValue),
-            IndicatorType::PENALTY => $this->calculatePenalty($indicator, $factValue),
+            IndicatorType::BASE    => $this->calculateBase(indicator: $indicator, factValue: $factValue),
+            IndicatorType::EXTRA   => $this->calculateExtra(indicator: $indicator, factValue: $factValue),
+            IndicatorType::PENALTY => $this->calculatePenalty(indicator: $indicator, factValue: $factValue),
         };
     }
 
@@ -41,7 +41,7 @@ final class ScoreCalculator
 
         // факт >= порога → вес, иначе 0
         return $factValue >= $indicator->base_value
-            ? new Points($indicator->base_weight)
+            ? new Points(value: $indicator->base_weight)
             : Points::zero();
     }
 
@@ -52,7 +52,7 @@ final class ScoreCalculator
         }
 
         // round(fact * weight) — для % перевыполнения и для штук
-        return Points::fromFloat($factValue * $indicator->extra_weight);
+        return Points::fromFloat(value: $factValue * $indicator->extra_weight);
     }
 
     private function calculatePenalty(KpiIndicator $indicator, float $factValue): Points
@@ -62,6 +62,6 @@ final class ScoreCalculator
         }
 
         // round(fact * penalty_weight) — penalty_weight отрицательный
-        return Points::fromFloat($factValue * $indicator->penalty_weight);
+        return Points::fromFloat(value: $factValue * $indicator->penalty_weight);
     }
 }

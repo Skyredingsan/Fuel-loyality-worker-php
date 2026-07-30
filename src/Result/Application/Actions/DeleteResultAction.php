@@ -15,14 +15,15 @@ final readonly class DeleteResultAction
 {
     public function __construct(
         private ResultRepositoryInterface $results,
-    ) {}
+    ) {
+    }
 
     public function execute(int $resultId): void
     {
         DB::transaction(function () use ($resultId): void {
             $monthly = $this->results->findMonthlyResultById($resultId);
             if ($monthly === null) {
-                throw new \DomainException("Result #{$resultId} not found");
+                throw new \DomainException(message: "Result #{$resultId} not found");
             }
 
             $this->results->deleteMonthlyResult($resultId);

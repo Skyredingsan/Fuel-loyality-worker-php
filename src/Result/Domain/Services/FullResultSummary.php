@@ -34,13 +34,14 @@ final class FullResultSummary
         public readonly int $yearlyPoints,
         public readonly ?Level $level,
         public readonly Collection $detailedResults,
-    ) {}
+    ) {
+    }
 
     public function totalForPeriod(): Points
     {
         $total = Points::zero();
         foreach ($this->categories as $cat) {
-            $total = $total->add($cat->total());
+            $total = $total->add(other: $cat->total());
         }
 
         return $total;
@@ -55,11 +56,11 @@ final class FullResultSummary
             'user_id'          => $this->userId,
             'user_fio'         => $this->userFio,
             'period'           => $this->period,
-            'categories'       => $this->categories->map(fn (CategorySummary $c) => $c->toArray())->all(),
+            'categories'       => $this->categories->map(callback: fn (CategorySummary $c) => $c->toArray())->all(),
             'total_points'     => $this->totalForPeriod()->value,
             'yearly_points'    => $this->yearlyPoints,
             'level'            => $this->level?->only(['id', 'name', 'min_points_per_year', 'privileges']),
-            'detailed_results' => $this->detailedResults->map(fn (IndicatorResult $r) => [
+            'detailed_results' => $this->detailedResults->map(callback: fn (IndicatorResult $r) => [
                 'id'                    => $r->id,
                 'monthly_result_id'     => $r->monthly_result_id,
                 'indicator_id'          => $r->indicator_id,

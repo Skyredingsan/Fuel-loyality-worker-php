@@ -143,11 +143,11 @@ clean: ## Удалить контейнеры, тома и кеши (⚠ уда�
 
 ## ─── Качество кода ────────────────────────────────────────────
 
-pint: ## Проверить стиль кода (Pint)
-	$(APP) vendor/bin/pint --test
+cs: ## Проверить стиль кода (PHP CS Fixer)
+	$(APP) vendor/bin/php-cs-fixer fix --dry-run --diff
 
-pint-fix: ## Исправить стиль кода (Pint)
-	$(APP) vendor/bin/pint
+cs-fix: ## Исправить стиль кода (PHP CS Fixer)
+	$(APP) vendor/bin/php-cs-fixer fix
 
 stan: ## Запустить PHPStan
 	$(APP) vendor/bin/phpstan analyse --memory-limit=2G
@@ -158,4 +158,4 @@ rector: ## Запустить Rector (dry-run)
 rector-fix: ## Применить изменения Rector
 	$(APP) vendor/bin/rector process
 
-qa: pint stan rector ## Запустить все проверки (Pint + PHPStan + Rector)
+qa: cs stan rector ## Запустить все проверки (CS Fixer + PHPStan + Rector)

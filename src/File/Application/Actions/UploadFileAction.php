@@ -14,7 +14,8 @@ final readonly class UploadFileAction
 {
     public function __construct(
         private FileRepositoryInterface $files,
-    ) {}
+    ) {
+    }
 
     public function execute(UploadedFile $file, string $type, ?string $entityId = null): array
     {

@@ -13,7 +13,8 @@ final readonly class IndicatorResultInputDto
         public string $indicatorCode,
         public ?float $factValue,
         public ?string $documentUrl = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data

@@ -18,5 +18,6 @@ final class ResultsUpdated
         public readonly int $userId,
         public readonly int $expertId,
         public readonly Period $period,
-    ) {}
+    ) {
+    }
 }

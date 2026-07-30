@@ -18,46 +18,46 @@ final class EloquentKpiRepository implements KpiRepositoryInterface
 
     public function findCategoryByCode(string $code): ?KpiCategory
     {
-        return KpiCategory::query()->where('code', $code)->first();
+        return KpiCategory::query()->where(column: 'code', operator: $code)->first();
     }
 
     public function allIndicators(): Collection
     {
         return KpiIndicator::query()
-            ->with('category')
+            ->with(relations: 'category')
             ->orderBy('code')
             ->get();
     }
 
     public function indicatorsByCategoryCode(string $categoryCode): Collection
     {
-        $category = $this->findCategoryByCode($categoryCode);
+        $category = $this->findCategoryByCode(code: $categoryCode);
         if ($category === null) {
             return new Collection();
         }
 
         return KpiIndicator::query()
-            ->with('category')
-            ->where('category_id', $category->id)
+            ->with(relations: 'category')
+            ->where(column: 'category_id', operator: $category->id)
             ->orderBy('code')
             ->get();
     }
 
     public function findIndicatorByCode(string $code): ?KpiIndicator
     {
-        return KpiIndicator::query()->where('code', $code)->first();
+        return KpiIndicator::query()->where(column: 'code', operator: $code)->first();
     }
 
     public function findIndicatorById(int $id): ?KpiIndicator
     {
-        return KpiIndicator::query()->with('category')->find($id);
+        return KpiIndicator::query()->with(relations: 'category')->find(id: $id);
     }
 
     public function createIndicator(array $data): KpiIndicator
     {
-        $category = $this->findCategoryByCode($data['category_code']);
+        $category = $this->findCategoryByCode(code: $data['category_code']);
         if ($category === null) {
-            throw new \DomainException("Category '{$data['category_code']}' not found");
+            throw new \DomainException(message: "Category '{$data['category_code']}' not found");
         }
 
         return KpiIndicator::create([
@@ -76,29 +76,29 @@ final class EloquentKpiRepository implements KpiRepositoryInterface
 
     public function updateIndicator(int $id, array $data): KpiIndicator
     {
-        $indicator = $this->findIndicatorById($id);
+        $indicator = $this->findIndicatorById(id: $id);
         if ($indicator === null) {
-            throw new \DomainException("Indicator #{$id} not found");
+            throw new \DomainException(message: "Indicator #{$id} not found");
         }
 
         if (isset($data['category_code'])) {
-            $category = $this->findCategoryByCode($data['category_code']);
+            $category = $this->findCategoryByCode(code: $data['category_code']);
             if ($category === null) {
-                throw new \DomainException("Category '{$data['category_code']}' not found");
+                throw new \DomainException(message: "Category '{$data['category_code']}' not found");
             }
             $data['category_id'] = $category->id;
             unset($data['category_code']);
         }
 
-        $indicator->update($data);
+        $indicator->update(attributes: $data);
         $indicator->refresh();
-        $indicator->load('category');
+        $indicator->load(relations: 'category');
 
         return $indicator;
     }
 
     public function deleteIndicator(int $id): bool
     {
-        return (bool) KpiIndicator::query()->where('id', $id)->delete();
+        return (bool) KpiIndicator::query()->where(column: 'id', operator: $id)->delete();
     }
 }

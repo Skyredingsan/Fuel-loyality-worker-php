@@ -18,15 +18,6 @@ use Throwable;
 
 /**
  * Job: асинхронная генерация CSV-экспорта.
- *
- * Flow:
- *   1. Coordinator инициирует экспорт → создаётся CsvExport (status=pending)
- *   2. Job диспатчится в очередь
- *   3. Worker подхватывает → ставит status=processing
- *   4. Генерирует файл → status=ready, file_path
- *   5. Coordinator поллит GET /api/reports/exports/{id}
- *
- * При ошибке → status=failed, error=...
  */
 final class ExportCsvJob implements ShouldQueue
 {
@@ -41,7 +32,8 @@ final class ExportCsvJob implements ShouldQueue
 
     public function __construct(
         public readonly string $exportId,
-    ) {}
+    ) {
+    }
 
     public function handle(CsvExportGenerator $generator): void
     {
@@ -54,13 +46,12 @@ final class ExportCsvJob implements ShouldQueue
         }
 
         try {
-            // Помечаем processing
             $export->update(['status' => 'processing']);
 
-            $period = Period::fromString($export->period);
-            $path = $generator->generateForPeriod($period, $export);
+            $period = Period::fromString(value: $export->period);
+            $path = $generator->generateForPeriod(period: $period, export: $export);
 
-            $rowsCount = $this->countRows($path);
+            $rowsCount = $this->countRows(path: $path);
 
             $export->update([
                 'status'     => 'ready',
@@ -77,7 +68,7 @@ final class ExportCsvJob implements ShouldQueue
 
             $export->update([
                 'status' => 'failed',
-                'error'  => mb_substr($e->getMessage(), 0, 1000),
+                'error'  => mb_substr(string: $e->getMessage(), start: 0, length: 1000),
             ]);
         }
     }
@@ -89,6 +80,6 @@ final class ExportCsvJob implements ShouldQueue
             return 0;
         }
 
-        return max(0, substr_count($content, "\n") - 1);
+        return max(0, substr_count(haystack: $content, needle: "\n") - 1);
     }
 }

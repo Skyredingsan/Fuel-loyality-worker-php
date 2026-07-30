@@ -46,7 +46,7 @@ class CsvExport extends Model
     {
         parent::boot();
 
-        static::creating(static function (self $model): void {
+        static::creating(callback: static function (self $model): void {
             if ($model->id === null) {
                 $model->id = (string) Str::uuid();
             }

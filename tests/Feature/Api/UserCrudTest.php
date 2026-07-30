@@ -5,12 +5,12 @@ declare(strict_types=1);
 use FuelPoints\User\Domain\Enums\UserRole;
 use FuelPoints\User\Domain\Models\User;
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     ['user' => $this->coordinator, 'token' => $this->token] = authUser(UserRole::COORDINATOR);
 });
 
-it('lists all users as coordinator', function (): void {
-    User::factory()->count(3)->tm()->create();
+it(description: 'lists all users as coordinator', closure: function (): void {
+    User::factory()->count(count: 3)->tm()->create();
 
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/users')
@@ -18,9 +18,9 @@ it('lists all users as coordinator', function (): void {
         ->assertJsonCount(4, 'data'); // 3 TM + 1 coordinator
 });
 
-it('filters users by role', function (): void {
-    User::factory()->count(2)->tm()->create();
-    User::factory()->count(1)->expert()->create();
+it(description: 'filters users by role', closure: function (): void {
+    User::factory()->count(count: 2)->tm()->create();
+    User::factory()->count(count: 1)->expert()->create();
 
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/users?role=tm')
@@ -28,9 +28,9 @@ it('filters users by role', function (): void {
         ->assertJsonCount(2, 'data');
 });
 
-it('lists only TMs via /users/tms', function (): void {
-    User::factory()->count(3)->tm()->create();
-    User::factory()->count(1)->expert()->create();
+it(description: 'lists only TMs via /users/tms', closure: function (): void {
+    User::factory()->count(count: 3)->tm()->create();
+    User::factory()->count(count: 1)->expert()->create();
 
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/users/tms')
@@ -38,7 +38,7 @@ it('lists only TMs via /users/tms', function (): void {
         ->assertJsonCount(3, 'data');
 });
 
-it('creates a new user as coordinator', function (): void {
+it(description: 'creates a new user as coordinator', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/users/register', [
             'email'        => 'new@fuel.ru',
@@ -55,7 +55,7 @@ it('creates a new user as coordinator', function (): void {
     $this->assertDatabaseHas('users', ['email' => 'new@fuel.ru']);
 });
 
-it('prevents non-coordinator from creating user', function (): void {
+it(description: 'prevents non-coordinator from creating user', closure: function (): void {
     ['token' => $expertToken] = authUser(UserRole::EXPERT);
 
     $this->withHeaders(jwtHeader($expertToken))
@@ -68,14 +68,14 @@ it('prevents non-coordinator from creating user', function (): void {
         ->assertForbidden();
 });
 
-it('cannot delete self', function (): void {
+it(description: 'cannot delete self', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->deleteJson("/api/users/{$this->coordinator->id}")
         ->assertStatus(400)
         ->assertJsonPath('message', 'Cannot delete yourself');
 });
 
-it('updates user info', function (): void {
+it(description: 'updates user info', closure: function (): void {
     $user = User::factory()->tm()->create();
 
     $this->withHeaders(jwtHeader($this->token))
@@ -88,13 +88,13 @@ it('updates user info', function (): void {
         ->assertJsonPath('azs_count', 10);
 });
 
-it('returns 404 for non-existent user', function (): void {
+it(description: 'returns 404 for non-existent user', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/users/99999')
         ->assertNotFound();
 });
 
-it('validates store user request', function (): void {
+it(description: 'validates store user request', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/users/register', [
             'email'    => 'not-email',

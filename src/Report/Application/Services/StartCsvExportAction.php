@@ -11,20 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Action: запуск экспорта.
- *
- * Создаёт запись в csv_exports + диспатчит ExportCsvJob в очередь.
- * Возвращает DTO для ответа (id + status=pending).
  */
 final readonly class StartCsvExportAction
 {
     public function __construct(
         private CsvExportGenerator $generator,
-    ) {}
+    ) {
+    }
 
     public function execute(int $userId, string $period): CsvExport
     {
-        // Валидация периода — просто пытаемся создать VO
-        Period::fromString($period);
+        Period::fromString(value: $period);
 
         return DB::transaction(function () use ($userId, $period): CsvExport {
             $export = CsvExport::create([
@@ -33,7 +30,6 @@ final readonly class StartCsvExportAction
                 'status'  => 'pending',
             ]);
 
-            // Диспатчим Job в очередь (sync для dev, redis для prod)
             ExportCsvJob::dispatch($export->id);
 
             return $export;

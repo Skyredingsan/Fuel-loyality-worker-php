@@ -18,7 +18,7 @@ final class PrivilegesCast implements CastsAttributes
     public function get($model, string $key, $value, array $attributes): ?Privileges
     {
         return $value !== null && $value !== ''
-            ? Privileges::fromJson($value)
+            ? Privileges::fromJson(json: $value)
             : null;
     }
 
@@ -32,8 +32,8 @@ final class PrivilegesCast implements CastsAttributes
             return $value->toJson();
         }
 
-        if (is_array($value)) {
-            return Privileges::fromArray($value)->toJson();
+        if (is_array(value: $value)) {
+            return Privileges::fromArray(data: $value)->toJson();
         }
 
         // Если уже строка (например, при upsert) — отдаём как есть

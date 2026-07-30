@@ -20,11 +20,12 @@ final class ResultRejectedNotification extends Notification implements ShouldQue
         public readonly string $period,
         public readonly string $reason,
         public readonly string $tmFio,
-    ) {}
+    ) {
+    }
 
     public function via($notifiable): array
     {
-        return app()->environment('testing')
+        return app()->environment(environments1: 'testing')
             ? ['database']
             : ['mail', 'database'];
     }
@@ -32,13 +33,13 @@ final class ResultRejectedNotification extends Notification implements ShouldQue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject("Результаты за {$this->period} отклонены")
-            ->greeting("Здравствуйте, {$notifiable->fio}!")
-            ->line("Результаты для ТМ **{$this->tmFio}** за период {$this->period} были отклонены.")
-            ->line("**Причина:**")
-            ->line($this->reason)
-            ->action('Перейти к вводу результатов', url('/enter-results'))
-            ->line('Пожалуйста, скорректируйте данные и отправьте заново.');
+            ->subject(subject: "Результаты за {$this->period} отклонены")
+            ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
+            ->line(line: "Результаты для ТМ **{$this->tmFio}** за период {$this->period} были отклонены.")
+            ->line(line: '**Причина:**')
+            ->line(line: $this->reason)
+            ->action(text: 'Перейти к вводу результатов', url: url(path: '/enter-results'))
+            ->line(line: 'Пожалуйста, скорректируйте данные и отправьте заново.');
     }
 
     /**

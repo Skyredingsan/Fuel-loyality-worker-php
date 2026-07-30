@@ -9,12 +9,12 @@ use FuelPoints\User\Domain\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+uses(classAndTraits1: RefreshDatabase::class);
 
-beforeEach(function (): void {
+beforeEach(closure: function (): void {
     // Фейкаем диски для экспорта
-    Storage::fake('exports');
-    Storage::fake('uploads');
+    Storage::fake(disk: 'exports');
+    Storage::fake(disk: 'uploads');
 
     ['user' => $this->coordinator, 'token' => $this->token] = authUser(UserRole::COORDINATOR);
 
@@ -52,7 +52,7 @@ beforeEach(function (): void {
         ]);
 });
 
-it('starts export and returns export_id', function (): void {
+it(description: 'starts export and returns export_id', closure: function (): void {
     $response = $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/reports/export', [
             'period' => '2026-07',
@@ -66,18 +66,18 @@ it('starts export and returns export_id', function (): void {
     // С sync queue Job уже выполнен — проверим, что статус стал ready
     $exportId = $response->json('export_id');
     $export = \FuelPoints\Report\Domain\Models\CsvExport::find($exportId);
-    expect($export->status)->toBe('ready');
-    expect($export->file_path)->not->toBeNull();
+    expect(value: $export->status)->toBe('ready');
+    expect(value: $export->file_path)->not->toBeNull();
 });
 
-it('validates period for export', function (): void {
+it(description: 'validates period for export', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/reports/export', ['period' => 'invalid'])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['period']);
 });
 
-it('prevents non-coordinator from exporting', function (): void {
+it(description: 'prevents non-coordinator from exporting', closure: function (): void {
     ['token' => $expertToken] = authUser(UserRole::EXPERT);
 
     $this->withHeaders(jwtHeader($expertToken))
@@ -85,7 +85,7 @@ it('prevents non-coordinator from exporting', function (): void {
         ->assertForbidden();
 });
 
-it('shows export status by ID', function (): void {
+it(description: 'shows export status by ID', closure: function (): void {
     $exportResponse = $this->withHeaders(jwtHeader($this->token))
         ->postJson('/api/reports/export', ['period' => '2026-07']);
 
@@ -99,7 +99,7 @@ it('shows export status by ID', function (): void {
         ->assertJsonPath('status', 'ready');
 });
 
-it('returns 404 for unknown export ID', function (): void {
+it(description: 'returns 404 for unknown export ID', closure: function (): void {
     $this->withHeaders(jwtHeader($this->token))
         ->getJson('/api/reports/exports/non-existent-uuid')
         ->assertNotFound();

@@ -21,7 +21,7 @@ final class JwtRefreshMiddleware
     {
         try {
             $newToken = JWTAuth::refresh(JWTAuth::getToken());
-            $request->attributes->set('new_jwt_token', $newToken);
+            $request->attributes->set(key: 'new_jwt_token', value: $newToken);
         } catch (JWTException $e) {
             return response()->json([
                 'success' => false,

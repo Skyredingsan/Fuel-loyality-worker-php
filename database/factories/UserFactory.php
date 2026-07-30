@@ -24,22 +24,22 @@ class UserFactory extends Factory
             'role'          => UserRole::TM->value,
             'fio'           => $this->faker->name(),
             'cluster_name'  => $this->faker->optional()->city(),
-            'azs_count'     => $this->faker->numberBetween(0, 20),
+            'azs_count'     => $this->faker->numberBetween(int2: 20),
         ];
     }
 
     public function coordinator(): static
     {
-        return $this->state(fn () => ['role' => UserRole::COORDINATOR->value]);
+        return $this->state(state: fn () => ['role' => UserRole::COORDINATOR->value]);
     }
 
     public function expert(): static
     {
-        return $this->state(fn () => ['role' => UserRole::EXPERT->value]);
+        return $this->state(state: fn () => ['role' => UserRole::EXPERT->value]);
     }
 
     public function tm(): static
     {
-        return $this->state(fn () => ['role' => UserRole::TM->value]);
+        return $this->state(state: fn () => ['role' => UserRole::TM->value]);
     }
 }

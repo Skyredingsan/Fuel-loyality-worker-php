@@ -22,7 +22,8 @@ final readonly class KpiIndicatorDto
         public ?int $baseWeight,
         public ?int $extraWeight,
         public ?int $penaltyWeight,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -38,7 +39,7 @@ final readonly class KpiIndicatorDto
             name: $data['name'],
             description: $data['description'] ?? null,
             unit: $data['unit'],
-            indicatorType: \FuelPoints\Kpi\Domain\Enums\IndicatorType::from($data['indicator_type']),
+            indicatorType: \FuelPoints\Kpi\Domain\Enums\IndicatorType::from(value: $data['indicator_type']),
             baseValue: isset($data['base_value']) ? (float) $data['base_value'] : null,
             baseWeight: isset($data['base_weight']) ? (int) $data['base_weight'] : null,
             extraWeight: isset($data['extra_weight']) ? (int) $data['extra_weight'] : null,

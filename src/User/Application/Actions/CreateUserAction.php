@@ -14,13 +14,14 @@ final readonly class CreateUserAction
 {
     public function __construct(
         private UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     public function execute(UserDto $dto, string $password): UserDto
     {
         $existing = $this->users->findByEmail($dto->email);
         if ($existing !== null) {
-            throw new \DomainException("User with email '{$dto->email}' already exists");
+            throw new \DomainException(message: "User with email '{$dto->email}' already exists");
         }
 
         $user = $this->users->create([
@@ -32,6 +33,6 @@ final readonly class CreateUserAction
             'azs_count'    => $dto->azsCount,
         ]);
 
-        return UserDto::fromArray($user->toArray());
+        return UserDto::fromArray(data: $user->toArray());
     }
 }

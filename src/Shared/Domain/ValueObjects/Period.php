@@ -20,17 +20,17 @@ final readonly class Period implements Stringable
         public int $month,
     ) {
         if ($month < 1 || $month > 12) {
-            throw new InvalidArgumentException("Month must be 1..12, got {$month}");
+            throw new InvalidArgumentException(message: "Month must be 1..12, got {$month}");
         }
         if ($year < 2000 || $year > 2100) {
-            throw new InvalidArgumentException("Year must be 2000..2100, got {$year}");
+            throw new InvalidArgumentException(message: "Year must be 2000..2100, got {$year}");
         }
     }
 
     public static function fromString(string $value): self
     {
-        if (!preg_match('/^(\d{4})-(\d{2})$/', $value, $m)) {
-            throw new InvalidArgumentException("Period must be in YYYY-MM format, got '{$value}'");
+        if (!preg_match(pattern: '/^(\d{4})-(\d{2})$/', subject: $value, matches: $m)) {
+            throw new InvalidArgumentException(message: "Period must be in YYYY-MM format, got '{$value}'");
         }
 
         return new self((int) $m[1], (int) $m[2]);
@@ -43,7 +43,7 @@ final readonly class Period implements Stringable
 
     public static function now(): self
     {
-        return self::fromDate(new \DateTimeImmutable());
+        return self::fromDate(date: new \DateTimeImmutable());
     }
 
     /**
@@ -51,17 +51,17 @@ final readonly class Period implements Stringable
      */
     public function firstDay(): \DateTimeImmutable
     {
-        return new \DateTimeImmutable(sprintf('%04d-%02d-01', $this->year, $this->month));
+        return new \DateTimeImmutable(datetime: sprintf('%04d-%02d-01', $this->year, $this->month));
     }
 
     public function next(): self
     {
-        return self::fromDate($this->firstDay()->modify('first day of next month'));
+        return self::fromDate(date: $this->firstDay()->modify(modifier: 'first day of next month'));
     }
 
     public function previous(): self
     {
-        return self::fromDate($this->firstDay()->modify('first day of previous month'));
+        return self::fromDate(date: $this->firstDay()->modify(modifier: 'first day of previous month'));
     }
 
     public function year(): int

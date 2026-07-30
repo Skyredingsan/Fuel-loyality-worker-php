@@ -25,7 +25,8 @@ final readonly class GetFullSummaryQuery
         private KpiRepositoryInterface $kpi,
         private UserRepositoryInterface $users,
         private LevelRepositoryInterface $levels,
-    ) {}
+    ) {
+    }
 
     public function execute(int $userId, Period $period): FullResultSummary
     {
@@ -33,7 +34,7 @@ final readonly class GetFullSummaryQuery
         $monthly = $this->results->findMonthlyResult($userId, $period);
 
         if ($user === null || $monthly === null) {
-            return FullResultSummary::empty($userId, (string) $period);
+            return FullResultSummary::empty(userId: $userId, period: (string) $period);
         }
 
         // 1. Детальные результаты
@@ -41,18 +42,18 @@ final readonly class GetFullSummaryQuery
 
         // 2. Сводка по каждой категории (возвращает Support\Collection после map)
         $categories = $this->kpi->allCategories()
-            ->map(fn ($cat) => CategorySummary::fromResults($cat, $detailed));
+            ->map(callback: fn ($cat) => CategorySummary::fromResults(category: $cat, results: $detailed));
 
         // 3. Годовой баланс + уровень
         $year = $period->year();
         $yearlyPoints = $this->results->totalPointsForYear($userId, $year);
 
-        $allLevels = SupportCollection::make($this->levels->all()->all());
-        $resolver = new LevelResolver($allLevels);
-        $level = $resolver->resolve($yearlyPoints);
+        $allLevels = SupportCollection::make(items: $this->levels->all()->all());
+        $resolver = new LevelResolver(levels: $allLevels);
+        $level = $resolver->resolve(yearlyPoints: $yearlyPoints);
 
         // 4. Общий итог за период
-        $totalForPeriod = $this->calculateTotalForPeriod($categories);
+        $totalForPeriod = $this->calculateTotalForPeriod(categories: $categories);
 
         return new FullResultSummary(
             userId: $userId,
@@ -73,7 +74,7 @@ final readonly class GetFullSummaryQuery
     {
         $total = Points::zero();
         foreach ($categories as $cat) {
-            $total = $total->add($cat->total());
+            $total = $total->add(other: $cat->total());
         }
         return $total;
     }

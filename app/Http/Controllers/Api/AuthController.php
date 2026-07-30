@@ -18,7 +18,8 @@ final class AuthController extends Controller
 {
     public function __construct(
         private readonly UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     /**
      * Логин по email и паролю. Возвращает JWT.
@@ -35,11 +36,11 @@ final class AuthController extends Controller
         $user = $this->users->findByEmail($credentials['email']);
 
         if ($user === null || !$this->users->checkPassword($user, $credentials['password'])) {
-            return $this->error('Invalid email or password', 401);
+            return $this->error(message: 'Invalid email or password', status: 401);
         }
 
         $token = JWTAuth::fromUser($user);
-        $ttl = (int) config('jwt.ttl', 1440);
+        $ttl = (int) config(key: 'jwt.ttl', default: 1440);
         $expiresIn = $ttl * 60;
 
         return response()->json([
@@ -66,7 +67,7 @@ final class AuthController extends Controller
         $user = JWTAuth::user();
 
         if ($user === null) {
-            return $this->error('User not found', 404);
+            return $this->error(message: 'User not found', status: 404);
         }
 
         return response()->json([
@@ -90,13 +91,13 @@ final class AuthController extends Controller
         try {
             $newToken = JWTAuth::refresh(JWTAuth::getToken());
         } catch (JWTException $e) {
-            return $this->error('Cannot refresh: '.$e->getMessage(), 401);
+            return $this->error(message: 'Cannot refresh: '.$e->getMessage(), status: 401);
         }
 
         return response()->json([
             'token'      => $newToken,
             'token_type' => 'bearer',
-            'expires_in' => (int) config('jwt.ttl', 1440) * 60,
+            'expires_in' => (int) config(key: 'jwt.ttl', default: 1440) * 60,
         ]);
     }
 
@@ -112,7 +113,7 @@ final class AuthController extends Controller
                 'message' => 'Successfully logged out',
             ]);
         } catch (JWTException $e) {
-            return $this->error('Failed to logout: '.$e->getMessage(), 500);
+            return $this->error(message: 'Failed to logout: '.$e->getMessage(), status: 500);
         }
     }
 

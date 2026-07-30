@@ -6,15 +6,15 @@ use FuelPoints\User\Domain\Enums\UserRole;
 use FuelPoints\User\Domain\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-beforeEach(function (): void {
-    $this->user = User::factory()->create([
+beforeEach(closure: function (): void {
+    $this->user = User::factory()->create(attributes: [
         'email'         => 'login@test.fuel',
         'password_hash' => Hash::make('password123'),
         'role'          => UserRole::COORDINATOR->value,
     ]);
 });
 
-it('logs in successfully with correct credentials', function (): void {
+it(description: 'logs in successfully with correct credentials', closure: function (): void {
     $response = $this->postJson('/api/login', [
         'email'    => 'login@test.fuel',
         'password' => 'password123',
@@ -29,21 +29,21 @@ it('logs in successfully with correct credentials', function (): void {
         ]);
 });
 
-it('rejects login with wrong password', function (): void {
+it(description: 'rejects login with wrong password', closure: function (): void {
     $this->postJson('/api/login', [
         'email'    => 'login@test.fuel',
         'password' => 'wrong',
     ])->assertUnauthorized();
 });
 
-it('rejects login with non-existent email', function (): void {
+it(description: 'rejects login with non-existent email', closure: function (): void {
     $this->postJson('/api/login', [
         'email'    => 'nobody@test.fuel',
         'password' => 'whatever',
     ])->assertUnauthorized();
 });
 
-it('validates login request body', function (): void {
+it(description: 'validates login request body', closure: function (): void {
     $this->postJson('/api/login', [
         'email'    => 'not-an-email',
         'password' => '',
@@ -51,7 +51,7 @@ it('validates login request body', function (): void {
         ->assertJsonValidationErrors(['email', 'password']);
 });
 
-it('returns current user via /users/me', function (): void {
+it(description: 'returns current user via /users/me', closure: function (): void {
     // Используем $this->user из beforeEach, а не authUser()
     $token = \Tymon\JWTAuth\Facades\JWTAuth::fromUser($this->user);
 
@@ -61,17 +61,17 @@ it('returns current user via /users/me', function (): void {
         ->assertJsonPath('email', 'login@test.fuel');
 });
 
-it('rejects request without token', function (): void {
+it(description: 'rejects request without token', closure: function (): void {
     $this->getJson('/api/users/me')->assertUnauthorized();
 });
 
-it('rejects request with invalid token', function (): void {
+it(description: 'rejects request with invalid token', closure: function (): void {
     $this->withHeader('Authorization', 'Bearer invalid.token.here')
         ->getJson('/api/users/me')
         ->assertUnauthorized();
 });
 
-it('logs out successfully', function (): void {
+it(description: 'logs out successfully', closure: function (): void {
     ['token' => $token] = authUser();
 
     $this->withHeaders(jwtHeader($token))

@@ -19,8 +19,8 @@ class IndicatorResultFactory extends Factory
         return [
             'monthly_result_id'       => \FuelPoints\Result\Domain\Models\MonthlyResult::factory(),
             'indicator_id'            => \FuelPoints\Kpi\Domain\Models\KpiIndicator::factory(),
-            'fact_value'              => $this->faker->randomFloat(2, 0, 100),
-            'calculated_points'       => $this->faker->numberBetween(0, 100),
+            'fact_value'              => $this->faker->randomFloat(nbMaxDecimals: 2, max: 100),
+            'calculated_points'       => $this->faker->numberBetween(int2: 100),
             'supporting_document_url' => null,
         ];
     }

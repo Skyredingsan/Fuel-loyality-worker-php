@@ -13,7 +13,7 @@ class UpdateUserRequest extends BaseFormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('id');
+        $userId = $this->route(param: 'id');
 
         return [
             'email'        => ['sometimes', 'email', 'max:255', "unique:users,email,{$userId}"],

@@ -42,7 +42,7 @@ class UserLevelHistory extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(related: User::class, foreignKey: 'user_id');
     }
 
     /**
@@ -50,6 +50,6 @@ class UserLevelHistory extends Model
      */
     public function level(): BelongsTo
     {
-        return $this->belongsTo(Level::class, 'level_id');
+        return $this->belongsTo(related: Level::class, foreignKey: 'level_id');
     }
 }

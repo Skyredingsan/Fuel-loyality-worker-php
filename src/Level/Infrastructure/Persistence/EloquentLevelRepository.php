@@ -20,13 +20,13 @@ final class EloquentLevelRepository implements LevelRepositoryInterface
 
     public function findById(int $id): ?Level
     {
-        return Level::query()->find($id);
+        return Level::query()->find(id: $id);
     }
 
     public function findByPoints(int $yearlyPoints): ?Level
     {
         return Level::query()
-            ->where('min_points_per_year', '<=', $yearlyPoints)
+            ->where(column: 'min_points_per_year', operator: '<=', value: $yearlyPoints)
             ->orderByDesc('min_points_per_year')
             ->first();
     }
@@ -52,17 +52,17 @@ final class EloquentLevelRepository implements LevelRepositoryInterface
     {
         return Level::query()
             ->join('user_level_history', 'levels.id', '=', 'user_level_history.level_id')
-            ->where('user_level_history.user_id', $userId)
-            ->orderByDesc('user_level_history.assigned_at')
-            ->select('levels.*')
+            ->where(column: 'user_level_history.user_id', operator: $userId)
+            ->orderByDesc(column: 'user_level_history.assigned_at')
+            ->select(columns: 'levels.*')
             ->first();
     }
 
     public function userHistory(int $userId): Collection
     {
         return UserLevelHistory::query()
-            ->with('level')
-            ->where('user_id', $userId)
+            ->with(relations: 'level')
+            ->where(column: 'user_id', operator: $userId)
             ->orderByDesc('assigned_at')
             ->get();
     }

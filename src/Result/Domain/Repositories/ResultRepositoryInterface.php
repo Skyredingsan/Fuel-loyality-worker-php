@@ -65,7 +65,7 @@ interface ResultRepositoryInterface
 
     public function deleteMonthlyResult(int $monthlyResultId): bool;
 
-        /**
+    /**
      * Delete a confirmed result (only coordinator).
      */
     public function deleteConfirmedMonthlyResult(int $monthlyResultId): bool;

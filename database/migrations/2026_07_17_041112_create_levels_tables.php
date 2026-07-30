@@ -18,15 +18,14 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('levels', static function (Blueprint $table): void {
             $table->id();
-            $table->string('name');
-            $table->integer('min_points_per_year')->default(0);
-            $table->jsonb('privileges')->nullable()->comment('JSON: bonus, prize, ...');
+            $table->string(column: 'name');
+            $table->integer(column: 'min_points_per_year')->default(0);
+            $table->jsonb(column: 'privileges')->nullable()->comment('JSON: bonus, prize, ...');
             $table->timestamps();
         });
 
@@ -36,16 +35,16 @@ return new class extends Migration
         Schema::create('user_level_history', static function (Blueprint $table): void {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
+            $table->foreignId(column: 'user_id')
+                ->constrained(table: 'users')
                 ->cascadeOnDelete();
 
-            $table->foreignId('level_id')
-                ->constrained('levels')
+            $table->foreignId(column: 'level_id')
+                ->constrained(table: 'levels')
                 ->cascadeOnDelete();
 
-            $table->date('assigned_at')->comment('Дата присвоения');
-            $table->integer('points_year')->comment('Сумма баллов за год на момент присвоения');
+            $table->date(column: 'assigned_at')->comment('Дата присвоения');
+            $table->integer(column: 'points_year')->comment('Сумма баллов за год на момент присвоения');
 
             $table->timestamps();
         });

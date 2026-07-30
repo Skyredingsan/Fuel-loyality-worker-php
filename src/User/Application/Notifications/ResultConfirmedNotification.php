@@ -21,7 +21,8 @@ final class ResultConfirmedNotification extends Notification implements ShouldQu
         public readonly string $period,
         public readonly int $yearlyPoints,
         public readonly string $levelName,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<int, string>
@@ -29,7 +30,7 @@ final class ResultConfirmedNotification extends Notification implements ShouldQu
     public function via($notifiable): array
     {
         // В тестах используем только database, чтобы не фейкать mail
-        return app()->environment('testing')
+        return app()->environment(environments1: 'testing')
             ? ['database']
             : ['mail', 'database'];
     }
@@ -37,13 +38,13 @@ final class ResultConfirmedNotification extends Notification implements ShouldQu
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject("Результаты за {$this->period} подтверждены")
-            ->greeting("Здравствуйте, {$notifiable->fio}!")
-            ->line("Ваши результаты за период {$this->period} были подтверждены координатором.")
-            ->line("Годовой баланс баллов: **{$this->yearlyPoints}**")
-            ->line("Текущий уровень: **{$this->levelName}**")
-            ->action('Посмотреть детали', url('/dashboard'))
-            ->line('Спасибо за работу!');
+            ->subject(subject: "Результаты за {$this->period} подтверждены")
+            ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
+            ->line(line: "Ваши результаты за период {$this->period} были подтверждены координатором.")
+            ->line(line: "Годовой баланс баллов: **{$this->yearlyPoints}**")
+            ->line(line: "Текущий уровень: **{$this->levelName}**")
+            ->action(text: 'Посмотреть детали', url: url(path: '/dashboard'))
+            ->line(line: 'Спасибо за работу!');
     }
 
     /**

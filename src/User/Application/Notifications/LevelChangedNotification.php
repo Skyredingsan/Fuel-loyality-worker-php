@@ -19,11 +19,12 @@ final class LevelChangedNotification extends Notification implements ShouldQueue
     public function __construct(
         public readonly string $newLevelName,
         public readonly int $yearlyPoints,
-    ) {}
+    ) {
+    }
 
     public function via($notifiable): array
     {
-        return app()->environment('testing')
+        return app()->environment(environments1: 'testing')
             ? ['database']
             : ['mail', 'database'];
     }
@@ -31,12 +32,12 @@ final class LevelChangedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject("Поздравляем! Новый уровень: {$this->newLevelName}")
-            ->greeting("Здравствуйте, {$notifiable->fio}!")
-            ->line("Вы достигли нового уровня: **{$this->newLevelName}**")
-            ->line("Годовой баланс баллов: **{$this->yearlyPoints}**")
-            ->line('Так держать!')
-            ->action('Посмотреть привилегии', url('/levels'));
+            ->subject(subject: "Поздравляем! Новый уровень: {$this->newLevelName}")
+            ->greeting(greeting: "Здравствуйте, {$notifiable->fio}!")
+            ->line(line: "Вы достигли нового уровня: **{$this->newLevelName}**")
+            ->line(line: "Годовой баланс баллов: **{$this->yearlyPoints}**")
+            ->line(line: 'Так держать!')
+            ->action(text: 'Посмотреть привилегии', url: url(path: '/levels'));
     }
 
     /**

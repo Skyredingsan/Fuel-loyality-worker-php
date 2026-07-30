@@ -10,7 +10,8 @@ final readonly class DeleteFileAction
 {
     public function __construct(
         private FileRepositoryInterface $files,
-    ) {}
+    ) {
+    }
 
     public function execute(string $type, string $filename): bool
     {

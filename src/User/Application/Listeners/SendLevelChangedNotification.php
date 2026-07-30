@@ -13,7 +13,8 @@ final class SendLevelChangedNotification implements ShouldQueue
 {
     public function __construct(
         private readonly UserRepositoryInterface $users,
-    ) {}
+    ) {
+    }
 
     public function handle(LevelChanged $event): void
     {
